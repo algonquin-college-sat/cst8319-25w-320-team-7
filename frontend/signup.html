@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="logo"></div>
+        <nav class="nav-links">
+            <a href="./signup.html">Signup</a>
+            <a href="./login.html">Login</a>
+        </nav>
+    </header>
+
+    <div>
+        <div class="img-centralized">
+            <img src="./assets/logo.png" alt="Website Logo">
+        </div>
+
+        <form id="signupForm">
+            <div class="div-centralized">
+                <h2>Signup</h2>
+            </div>
+
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" required aria-label="First Name">
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" required aria-label="Last Name">
+
+            <label for="email">Email</label>
+            <input type="email" id="email" required aria-label="Email">
+
+            <label for="organizationName">Organization</label>
+            <input type="text" id="organizationName" required aria-label="Organization">
+
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" required aria-label="Phone">
+
+            <label for="role">Role</label>
+            <select id="role" name="type" required aria-label="Role">
+                <option value="Organization">Organization</option>
+                <option value="Professor">Professor</option>
+            </select>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" required aria-label="Password"><br><br>
+
+            <div class="button-group">
+                <button type="submit">Register</button>
+                <button type="button" onclick="clearForm()">Cancel</button>
+            </div>
+        </form>
+    </div>    
+
+    <div id="message"></div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const form = document.getElementById('signupForm');
+            const messageDiv = document.getElementById('message');
+
+            const userData = {
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                organizationName: document.getElementById('organizationName').value,
+                phone: document.getElementById('phone').value,
+                type: document.getElementById('role').value.toUpperCase(),
+                password: document.getElementById('password').value
+            };
+
+            try {
+                const response = await fetch('http://localhost:8080/api/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+
+                const responseData = await response.json();
+
+                if (response.ok) {
+                    clearForm();
+                    messageDiv.innerHTML = '<p class="success">User registered successfully!</p>';
+                } else {
+                    throw new Error(responseData.message || `Error: ${response.statusText}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                messageDiv.innerHTML = `<p class="error">${error.message}</p>`;
+            }
+        });
+
+        function clearForm() {
+            document.getElementById('signupForm').reset();
+            document.getElementById('message').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap');
+
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Heading styles */
+h2 {
+    font-weight: normal;
+    color: gray;
+}
+
+/* Header styles */
+header {
+    background: #f9f9f9;
+    color: white;
+    width: 100vw;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.logo {
+    font-size: 20px;
+    margin-left: 20px;
+    color: darkgreen;
+}
+
+.nav-links {
+    display: flex;
+    gap: 15px;
+    margin-right: 20px;
+}
+
+.nav-links a {
+    color: green;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.nav-links a:hover {
+    color: black;
+}
+
+/* Form styling */
+form {
+    /* background: #f9f9f9; */
+    padding: 20px;
+    border-radius: 5px;
+    display: inline-block;
+    text-align: left;
+    width: 400px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+input:focus, select:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+/* Radio group styling */
+.radio-group {
+    display: flex;
+    justify-content: center;
+    gap: 3px;
+    margin-bottom: 10px;
+}
+
+/* Button group styling */
+.button-group {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 5px;
+}
+
+button {
+    padding: 10px 15px;
+    font-size: 12px;
+    background-color: darkgray;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    flex-grow: 1;
+}
+
+button:hover {
+    background-color: gray;
+}
+
+/* Message styling */
+#message {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.success {
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+/* Centralized div styling */
+.div-centralized {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.div-centralized h2 {
+    margin-bottom: 30px; 
+}
+
+/* Centralized image styling */
+.img-centralized {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.img-centralized img {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+}
