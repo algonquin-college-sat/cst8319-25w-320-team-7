@@ -7,57 +7,67 @@
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-
-    <header>
-        <div class="logo"></div>
-        <nav class="nav-links">
-            <a href="./signup.html">Signup</a>
-            <a href="./login.html">Login</a>
-        </nav>
-    </header>
-
-    <div>
-        <div class="img-centralized">
-            <img src="./assets/logo.png" alt="Website Logo">
+    <div class="header">
+        <h2>Multi-disciplinary Project Platform</h2>
+        <div class="school-info">
+            <div>Algonquin College</div>
+            <div>School of Advanced Technology</div>
         </div>
+    </div>
 
-        <form id="signupForm">
-            <div class="div-centralized">
-                <h2>Signup</h2>
-            </div>
-
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" required aria-label="First Name">
-
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" required aria-label="Last Name">
-
-            <label for="email">Email</label>
-            <input type="email" id="email" required aria-label="Email">
-
-            <label for="organizationName">Organization</label>
-            <input type="text" id="organizationName" required aria-label="Organization">
-
-            <label for="phone">Phone</label>
-            <input type="text" id="phone" required aria-label="Phone">
-
-            <label for="role">Role</label>
-            <select id="role" name="type" required aria-label="Role">
-                <option value="Organization">Organization</option>
-                <option value="Professor">Professor</option>
-            </select>
-
-            <label for="password">Password</label>
-            <input type="password" id="password" required aria-label="Password"><br><br>
-
-            <div class="button-group">
+    <div class="main-container">
+        <div class="describe-section">
+            <p>Welcome to our Multi-disciplinary Project Platform. Submit your project proposals and collaborate with our talented students and expert faculty.</p>
+            <ul class="feature-list">
+                <li>Submit and manage your project proposals</li>
+                <li>Collaborate with multi-disciplinary student teams</li>
+                <li>Get expert guidance from faculty advisors</li>
+                <li>Monitor project development and outcomes</li>
+            </ul>
+        </div>
+        <div class="form-container">
+            <form id="signupForm">
+                <div class="form-group">
+                    <input type="text" id="firstName" placeholder="First Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" id="lastName" placeholder="Last Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="tel" id="phone" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <select id="type" required>
+                        <option value="" disabled selected>Select User Type</option>
+                        <option value="Organization">Client</option>
+                        <option value="Professor">Professor</option>
+                    </select>
+                </div>
+                <div class="form-group hidden" id="orgGroup">
+                    <input type="text" id="organizationName" placeholder="Organization Name (Optional)">
+                </div>
+                <div class="form-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="retypePassword" placeholder="Re-type Your Password" required>
+                </div>
                 <button type="submit">Register</button>
-                <button type="button" onclick="clearForm()">Cancel</button>
-            </div>
-        </form>
-    </div>    
+                <div class="divider"></div>
+                <div class="login-link">
+                    Already have an account? <a href="login.html">Login now</a>
+                </div>
+            </form>
+            <div id="message" class="message-container"></div>
+        </div>
+    </div>
 
-    <div id="message"></div>
+    <footer class="footer">
+        <p>© 2025 Algonquin College - School of Advanced Technology. All rights reserved.</p>
+    </footer>
 
     <script>
         document.getElementById('signupForm').addEventListener('submit', async function (event) {
@@ -65,6 +75,8 @@
 
             const form = document.getElementById('signupForm');
             const messageDiv = document.getElementById('message');
+            const password = document.getElementById('password').value;
+            const retypePassword = document.getElementById('retypePassword').value;
 
             const userData = {
                 firstName: document.getElementById('firstName').value,
@@ -72,9 +84,14 @@
                 email: document.getElementById('email').value,
                 organizationName: document.getElementById('organizationName').value,
                 phone: document.getElementById('phone').value,
-                type: document.getElementById('role').value.toUpperCase(),
+                type: document.getElementById('type').value.toUpperCase(),
                 password: document.getElementById('password').value
             };
+
+            if (password !== retypePassword) {
+                alert('Passwords do not match');
+                return;
+            }
 
             try {
                 const response = await fetch('http://localhost:8080/api/signup', {
@@ -94,6 +111,15 @@
             } catch (error) {
                 console.error('Error:', error);
                 messageDiv.innerHTML = `<p class="error">${error.message}</p>`;
+            }
+        });
+
+        document.getElementById('type').addEventListener('change', function() {
+            const orgGroup = document.getElementById('orgGroup');
+            if (this.value === 'Organization') {
+                orgGroup.classList.remove('hidden');
+            } else {
+                orgGroup.classList.add('hidden');
             }
         });
 
