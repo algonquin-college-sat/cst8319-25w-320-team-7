@@ -1,162 +1,270 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100..900&display=swap');
+:root {
+    --primary-color: #016341;
+    --primary-hover: #015235;
+    --background-color: #f0f2f5;
+}
 
-/* General reset */
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
-}
-
-/* Body styling */
-body {
-    font-family: 'Roboto', sans-serif;
-    font-size: 12px;
-    text-align: center;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
 }
 
-/* Heading styles */
-h2 {
-    font-weight: normal;
-    color: gray;
-}
-
-/* Header styles */
-header {
-    background: #f9f9f9;
+.header {
+    background-color: var(--primary-color);
     color: white;
-    width: 100vw;
-    height: 50px;
+    width: 100%;
+    padding: 0.7rem 2rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 12px;
 }
 
-.logo {
-    font-size: 20px;
-    margin-left: 20px;
-    color: darkgreen;
+.header h2 {
+    font-size: 1.8rem;
+    font-family: Arial, sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.3px;
 }
 
-.nav-links {
+.school-info {
+    text-align: right;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: var(--background-color);
+    min-height: 100vh;
     display: flex;
-    gap: 15px;
-    margin-right: 20px;
+    flex-direction: column;
+    align-items: center;
+    padding: 7rem 1rem 0 1rem;
+    position: relative;
+    min-height: 100vh;
 }
 
-.nav-links a {
-    color: green;
-    text-decoration: none;
-    font-size: 14px;
+.main-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px;
+    width: 100%;
+    gap: 3rem;
+    margin-bottom: 6rem;
 }
 
-.nav-links a:hover {
-    color: black;
+.describe-section {
+    flex: 1;
+    padding-right: 2rem;
 }
 
-/* Form styling */
-form {
-    /* background: #f9f9f9; */
-    padding: 20px;
-    border-radius: 5px;
-    display: inline-block;
+.describe-section h1 {
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.describe-section p {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    line-height: 1.4;
+    margin-bottom: 1.5rem;
     text-align: left;
-    width: 400px;
+    width: 90%;
 }
 
-label {
-    display: block;
-    margin-bottom: 5px;
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 2rem;
+}
+
+.feature-list li {
+    font-size: 1.2rem;
+    color: #1c1e21;
+    margin-bottom: 1rem;
+    padding-left: 1.8rem;
+    position: relative;
+}
+
+.feature-list li::before {
+    content: '✓';
+    color: var(--primary-color);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+}
+
+.form-container {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+}
+
+.form-group {
+    margin-bottom: 1rem;
 }
 
 input, select {
     width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-size: 12px;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #f5f6f7;
 }
 
 input:focus, select:focus {
-    border-color: #007BFF;
     outline: none;
-}
-
-/* Radio group styling */
-.radio-group {
-    display: flex;
-    justify-content: center;
-    gap: 3px;
-    margin-bottom: 10px;
-}
-
-/* Button group styling */
-.button-group {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    gap: 5px;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(1, 99, 65, 0.2);
 }
 
 button {
-    padding: 10px 15px;
-    font-size: 12px;
-    background-color: darkgray;
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    font-weight: bold;
     cursor: pointer;
-    text-align: center;
-    flex-grow: 1;
+    transition: background-color 0.3s;
 }
 
 button:hover {
-    background-color: gray;
+    background-color: var(--primary-hover);
 }
 
-/* Message styling */
-#message {
+.divider {
+    border-bottom: 1px solid #dadde1;
+    margin: 1.5rem 0;
+}
+
+.login-link, .register-link {
+    text-align: center;
+    margin-top: 1rem;
+    color: #1c1e21;
+}
+
+.login-link a, .register-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link a:hover, .register-link a:hover {
+    text-decoration: underline;
+}
+
+.hidden {
+    display: none;
+}
+
+.message-container {
     margin-top: 15px;
-    font-size: 14px;
+    text-align: center;
 }
 
 .success {
-    color: green;
+    color: #015235; 
+    margin: 10px 0;
 }
 
 .error {
-    color: red;
+    color: #f44336; 
+    margin: 10px 0;
 }
 
-/* Centralized div styling */
-.div-centralized {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.div-centralized h2 {
-    margin-bottom: 30px; 
-}
-
-/* Centralized image styling */
-.img-centralized {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-.img-centralized img {
+.footer {
+    background-color: #f5f5f5;
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
     width: 100%;
-    max-width: 400px;
-    height: auto;
+    border-top: 1px solid #ddd;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
+
+.footer p {
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .header {
+        padding: 0.8rem 2rem;
+        justify-content: center;
+    }
+
+    .header h2 {
+        text-align: center;
+        font-size: 1.7rem;
+    }
+
+    .school-info {
+        display: none;
+    }
+
+    .main-container {
+        flex-direction: column;
+        text-align: center;
+        padding-top: 2rem;
+    }
+
+    .describe-section {
+        padding-right: 0;
+        margin-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .describe-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .describe-section p {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        text-align: center;
+        width: 95%;
+        margin: 0 auto 1rem auto;
+    }
+
+    .feature-list {
+        margin-top: 1rem;
+        width: 95%;
+        margin: 1rem auto;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: 460px;
+    }
+
+    .feature-list li {
+        font-size: 1.1rem;
+        text-align: left;
+        padding-left: 1.8rem;
+        width: 100%;
+    }
+
+    body {
+        padding: 5rem 1rem 4rem 1rem;
+    }
+} 

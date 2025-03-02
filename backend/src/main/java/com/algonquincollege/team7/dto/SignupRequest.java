@@ -18,7 +18,6 @@ public record SignupRequest(
         @NotBlank(message = "Last name is required")
         String lastName,
 
-        @NotBlank(message = "Organization name is required")
         String organizationName,
 
         @NotNull(message = "Phone number is required")
