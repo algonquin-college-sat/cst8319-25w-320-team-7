@@ -39,7 +39,7 @@ git clone https://github.com/algonquin-college-sat/cst8319-25w-320-team-7.git
 cd cst8319-25w-320-team-7/backend
 ```
 
-2. Create a `.env` file in the root directory and add the following variables:
+2. Create a `.env` file in the directory backend/src/main/resources and add the following variables:
 
 ```env
 # Application name
@@ -143,7 +143,7 @@ Response:
 1. Navigate to the frontend directory:
 
 ```bash
-cd cst8319-25w-320-team-7/fron
+cd cst8319-25w-320-team-7/frontend
 ```
 
 - `css/`: Stylesheets for the application.
