@@ -51,7 +51,6 @@ public class ProjectService {
             throw new ApiException(HttpStatus.NOT_FOUND, "Organization not found");
         }
 
-        // 创建分页请求
         Pageable pageable = PageRequest.of(
                 request.page(),
                 request.size(),
@@ -59,7 +58,6 @@ public class ProjectService {
                 request.sortBy()
         );
 
-        // 根据请求参数过滤项目
         Page<Project> projectPage;
         if (request.semesterFilter() != null) {
             projectPage = projectRepository.findByOrganizationIdAndSemester(organizationId, request.semesterFilter(), pageable);
@@ -67,12 +65,10 @@ public class ProjectService {
             projectPage = projectRepository.findByOrganizationId(organizationId, pageable);
         }
 
-        // 转换为DTO
         List<ProjectListResponse> projectResponses = projectPage.getContent().stream()
                 .map(ProjectListResponse::fromProject)
                 .collect(Collectors.toList());
 
-        // 创建包装响应
         return new ProjectListResponseWrapper(
                 projectResponses,
                 projectPage.getNumber(),
