@@ -3,23 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
+    <title>Home</title>
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
 <div class="header">
-    <h2>Multi-disciplinary Project Platform</h2>
-    <div class="school-info">
-        <div>Algonquin College</div>
-        <div>School of Advanced Technology</div>
+    <h2>Multidisciplinary Project Request Platform</h2>
+    <div class="header-right">
+        <div class="school-info">
+            <div>Algonquin College</div>
+            <div>School of Advanced Technology</div>
+        </div>
+        <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 </div>
 
-<h1>This is a home page</h1>
+<div class="main-container with-sidebar">
+    <div class="sidebar">
+        <nav class="nav-menu">
+            <a href="addProject.html" class="menu-item">Submit project request</a>
+        </nav>
+    </div>
+</div>
 
 <footer class="footer">
     <p>© 2025 Algonquin College - School of Advanced Technology. All rights reserved.</p>
 </footer>
 
+<script>
+    window.addEventListener('load', function() {
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        if (!userInfo) {
+            window.location.href = 'login.html';
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+        window.location.href = 'login.html';
+    }
+</script>
 </body>
 </html>

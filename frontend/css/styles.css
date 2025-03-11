@@ -14,7 +14,7 @@
     background-color: var(--primary-color);
     color: white;
     width: 100%;
-    padding: 0.7rem 2rem;
+    padding: 0.5rem 2rem;
     position: fixed;
     top: 0;
     left: 0;
@@ -26,7 +26,7 @@
 }
 
 .header h2 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-family: Arial, sans-serif;
     font-weight: 500;
     letter-spacing: 0.3px;
@@ -34,8 +34,8 @@
 
 .school-info {
     text-align: right;
-    font-size: 1.1rem;
-    line-height: 1.4;
+    font-size: 1rem;
+    line-height: 1.3;
     font-family: Arial, sans-serif;
 }
 
@@ -46,7 +46,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 7rem 1rem 0 1rem;
+    padding: 6rem 1rem 0 1rem;
     position: relative;
     min-height: 100vh;
 }
@@ -206,6 +206,101 @@ button:hover {
     margin: 0;
 }
 
+/* Project page specific styles */
+.project-page {
+    justify-content: center !important;
+    padding: 0 2rem;
+}
+
+.project-page .project-form {
+    max-width: 800px !important;
+    padding: 2rem;
+}
+
+.project-title {
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.project-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.project-form label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.project-form input[type="text"],
+.project-form input[type="number"],
+.project-form textarea,
+.project-form select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #f5f6f7;
+}
+
+.project-form textarea {
+    min-height: 120px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+}
+
+.project-form textarea:focus,
+.project-form input:focus,
+.project-form select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(1, 99, 65, 0.2);
+}
+
+.project-form .checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+.project-form .checkbox-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.project-form .checkbox-group input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.logout-btn {
+    background-color: transparent;
+    border: 1px solid white;
+    color: white;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 4px;
+    width: auto;
+    transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: white;
+    color: var(--primary-color);
+}
+
 @media (max-width: 900px) {
     .header {
         padding: 0.8rem 2rem;
@@ -267,4 +362,145 @@ button:hover {
     body {
         padding: 5rem 1rem 4rem 1rem;
     }
-} 
+
+    .project-page {
+        padding: 0 1rem;
+    }
+
+    .project-page .project-form {
+        padding: 1.5rem;
+    }
+
+    .project-title {
+        font-size: 1.5rem;
+    }
+
+    .header-right {
+        gap: 1rem;
+    }
+    
+    .logout-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+}
+
+.button-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.button-group button {
+    flex: 1;
+}
+
+.submit-btn {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.submit-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.cancel-btn {
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.cancel-btn:hover {
+    background-color: #e5e5e5;
+}
+
+.form-note {
+    margin-bottom: 1.5rem;
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+.required {
+    color: #ff0000;
+    margin-left: 2px;
+}
+
+.field-note {
+    color: #666;
+    font-size: 0.85rem;
+    margin: 2px 0 6px 0;
+    font-style: italic;
+}
+
+.checkbox-group .field-note {
+    margin-left: 24px;
+}
+
+.radio-group {
+    display: flex;
+    gap: 2rem;
+    margin-top: 0.5rem;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.radio-label input[type="radio"] {
+    width: auto;
+    margin: 0;
+    cursor: pointer;
+}
+
+/* 添加侧边栏相关样式 */
+.with-sidebar {
+    display: flex !important;
+    gap: 2rem;
+    align-items: flex-start !important;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.menu-item:hover {
+    background-color: #f5f6f7;
+}
+
+.menu-icon {
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+.content {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+}

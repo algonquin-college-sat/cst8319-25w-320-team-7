@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="header">
-        <h2>Multi-disciplinary Project Platform</h2>
+        <h2>Multidisciplinary Project Request Platform</h2>
         <div class="school-info">
             <div>Algonquin College</div>
             <div>School of Advanced Technology</div>
@@ -20,7 +20,7 @@
             <p>Welcome to our Multi-disciplinary Project Platform. Submit your project proposals and collaborate with our talented students and expert faculty.</p>
             <ul class="feature-list">
                 <li>Submit and manage your project proposals</li>
-                <li>Collaborate with multi-disciplinary student teams</li>
+                <li>Collaborate with multidisciplinary student teams</li>
                 <li>Get expert guidance from faculty advisors</li>
                 <li>Monitor project development and outcomes</li>
             </ul>
@@ -65,6 +65,14 @@
                 const responseData = await response.json();
 
                 if (response.ok) {
+                    localStorage.setItem('token', userData.token);
+                    localStorage.setItem('userInfo', JSON.stringify({
+                        id: userData.userId,
+                        email: userData.email,
+                        firstName: userData.firstName,
+                        lastName: userData.lastName,
+                        type: userData.type
+                    }));
                     clearForm();
                     document.getElementById('message').innerHTML = '<p class="success">User validated successfully!</p>';
                     setTimeout(function() {
