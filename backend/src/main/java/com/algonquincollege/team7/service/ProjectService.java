@@ -32,17 +32,28 @@ public class ProjectService {
     private UserRepository userRepository;
 
     public void registerProject(@RequestBody @Valid ProjectRegistrationRequest data) {
+        try {
+            var invalidOrganizationId = !userRepository.existsByIdAndType(
+                data.organizationId(), 
+                UserType.valueOf("ORGANIZATION")
+            );
+            
+            if (invalidOrganizationId) {
+                throw new ApiException(HttpStatus.CONFLICT, "Invalid organization ID");
+            }
 
-        var invalidOrganizationId = !userRepository.existsByIdAndType(data.organizationId(), UserType.valueOf("ORGANIZATION"));
-        if (invalidOrganizationId) {
-            throw new ApiException(HttpStatus.CONFLICT, "Invalid organization ID");
+            var user = userRepository.findById(data.organizationId())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Organization not found"));
+
+            var project = new Project(data, user);
+            projectRepository.save(project);
+            
+        } catch (Exception e) {
+            throw new ApiException(
+                HttpStatus.BAD_REQUEST, 
+                "Error registering project: " + e.getMessage()
+            );
         }
-
-        var user = userRepository.findById(data.organizationId()).get();
-
-        var project = new Project(data, user);
-        System.out.println(project);
-        projectRepository.save(project);
     }
 
     public ProjectListResponseWrapper getProjectsByOrganizationId(Long organizationId, ProjectListRequest request) {

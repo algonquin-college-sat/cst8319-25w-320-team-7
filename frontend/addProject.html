@@ -114,21 +114,25 @@
 
         const messageDiv = document.getElementById('message');
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        if (!userInfo) {
-            window.location.href = 'login.html';
+        console.log('User Info:', userInfo);  
+        
+        if (!userInfo || !userInfo.id) {
+            messageDiv.innerHTML = '<p class="error">Error: User information not found. Please login again.</p>';
             return;
         }
 
         const projectData = {
-            projectName: document.getElementById('projectName').value,
-            description: document.getElementById('description').value,
+            projectName: document.getElementById('projectName').value.trim(),
+            description: document.getElementById('description').value.trim(),
             availableTime: parseInt(document.getElementById('availableTime').value),
-            purchasingRequirements: document.getElementById('purchasingRequirements').value,
+            purchasingRequirements: document.getElementById('purchasingRequirements').value.trim() || null,
             ndaRequired: document.querySelector('input[name="ndaRequired"]:checked').value === 'true',
             showcaseAllowed: document.querySelector('input[name="showcaseAllowed"]:checked').value === 'true',
             semester: document.getElementById('semester').value,
-            organization: userInfo.id
+            organizationId: userInfo.id  
         };
+
+        console.log('Sending project data:', projectData);
 
         try {
             const response = await fetch('http://localhost:8080/api/project', {
@@ -141,18 +145,32 @@
             });
 
             const responseData = await response.json();
+            console.log('Response status:', response.status);
+            console.log('Response data:', responseData);
 
             if (response.ok) {
                 clearForm();
                 messageDiv.innerHTML = '<p class="success">Project submitted successfully!</p>';
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
             } else {
-                throw new Error(responseData.message || `Error: ${response.statusText}`);
+                if (Array.isArray(responseData)) {
+                    const errorMessages = responseData.map(error => `${error.message}`).join(', ');
+                    messageDiv.innerHTML = `<p class="error">Error: ${errorMessages}</p>`;
+                } else {
+                    messageDiv.innerHTML = `<p class="error">Error: ${responseData.message || 'Failed to submit project'}</p>`;
+                }
             }
         } catch (error) {
-            console.error('Error:', error);
-            messageDiv.innerHTML = `<p class="error">${error.message}</p>`;
+            console.error('Full error:', error);
+            messageDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
         }
     });
+
+    document.getElementById('projectForm').onsubmit = function() {
+        return false;
+    };
 
     function clearForm() {
         document.getElementById('projectForm').reset();

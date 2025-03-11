@@ -62,9 +62,8 @@
                     body: JSON.stringify(userData)
                 });
 
-                const responseData = await response.json();
-
                 if (response.ok) {
+                    const userData = await response.json();
                     localStorage.setItem('token', userData.token);
                     localStorage.setItem('userInfo', JSON.stringify({
                         id: userData.userId,
@@ -74,8 +73,8 @@
                         type: userData.type
                     }));
                     clearForm();
-                    document.getElementById('message').innerHTML = '<p class="success">User validated successfully!</p>';
-                    setTimeout(function() {
+                    document.getElementById('message').innerHTML = '<p class="success">Login successful!</p>';
+                    setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1000);
                 } else {
