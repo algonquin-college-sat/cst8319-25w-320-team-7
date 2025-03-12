@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Projects</title>
+    <link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <div class="header">
+        <h2>Multi-disciplinary Project Platform</h2>
+        <div class="school-info">
+            <div>Algonquin College</div>
+            <div>School of Advanced Technology</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="describe-section">
+            <h1>Available Projects</h1>
+            <p>Explore our current multi-disciplinary projects submitted by our industry partners.</p>
+            <ul class="feature-list">
+                <li>Filter projects by category or technology</li>
+                <li>Collaborate with diverse student teams</li>
+                <li>Gain real-world experience on real projects</li>
+                <li>Work under faculty mentorship and guidance</li>
+            </ul>
+        </div>
+
+        <div class="form-container">
+            <h2>Project List</h2>
+            <div id="projects-container">
+                <!-- projects -->
+            </div>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 Algonquin College - School of Advanced Technology. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const organizationId = 1; // somehow get from previous page
+    
+        async function loadProjects() {
+            const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
+    
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+    
+                const projects = data.projects || data; 
+    
+                const container = document.getElementById('projects-container');
+                container.innerHTML = '';
+    
+                if (projects.length === 0) {
+                    container.innerHTML = "<p>No projects found for this organization.</p>";
+                    return;
+                }
+    
+                projects.forEach(project => {
+                    const projectDiv = document.createElement('div');
+                    projectDiv.className = 'project-card';
+    
+                    projectDiv.innerHTML = `
+                        <h3>${project.projectName}</h3>
+                        <p><strong>Description:</strong> ${project.description}</p>
+                        <p><strong>Semester:</strong> ${project.semester}</p>
+                        <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                        <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                        <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                    `;
+    
+                    container.appendChild(projectDiv);
+                });
+    
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        }
+    
+        window.onload = () => loadProjects();
+    </script>
+</body>
+</html>
