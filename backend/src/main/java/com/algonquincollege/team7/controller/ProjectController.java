@@ -4,6 +4,7 @@ import com.algonquincollege.team7.dto.ProjectListRequest;
 import com.algonquincollege.team7.dto.ProjectListResponseWrapper;
 import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
 import com.algonquincollege.team7.dto.ProjectRegistrationResponse;
+import com.algonquincollege.team7.model.Project;
 import com.algonquincollege.team7.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +36,9 @@ public class ProjectController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping
+    public ResponseEntity<ProjectListResponseWrapper> getAllProjects() {
+        ProjectListResponseWrapper response = projectService.getAllProjects();
+        return ResponseEntity.ok(response);
+    }
 }

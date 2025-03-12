@@ -88,4 +88,11 @@ public class ProjectService {
                 projectPage.getTotalPages()
         );
     }
+
+    public ProjectListResponseWrapper getAllProjects() {
+        List<Project> projects = projectRepository.findAll(); 
+        List<ProjectListResponse> projectResponses = projects.stream().map(ProjectListResponse::fromProject).collect(Collectors.toList());
+
+        return new ProjectListResponseWrapper(projectResponses, 0, projects.size(), projects.size(), 1);
+    }
 }
