@@ -25,9 +25,12 @@
                 <li>Gain real-world experience on real projects</li>
                 <li>Work under faculty mentorship and guidance</li>
             </ul>
+            <div class="login-link">
+                <a href="index.html">Return</a>
+            </div>
         </div>
 
-        <div class="form-container">
+        <div class="form-container" id="projects">
             <h2>Project List</h2>
             <div id="projects-container">
                 <!-- projects -->
@@ -41,8 +44,12 @@
     </footer>
 
     <script>
-        const organizationId = 1; // somehow get from previous page
-    
+
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        console.log('User Info:', userInfo);  
+
+        const organizationId = userInfo.id;
+
         async function loadProjects() {
             const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
     
@@ -51,7 +58,7 @@
                 const data = await response.json();
     
                 const projects = data.projects || data; 
-    
+                
                 const container = document.getElementById('projects-container');
                 container.innerHTML = '';
     
