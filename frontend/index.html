@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/auth.js"></script>
 </head>
 <body>
 <div class="header">
@@ -43,21 +44,19 @@
 
 <script>
     window.addEventListener('load', function() {
+        if (!checkAuthentication()) return;
+        
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        if (!userInfo) {
-            window.location.href = 'login.html';
-        } else {
-            // Show/hide menu items based on user type
-            const submitNewRequestLink = document.querySelector('a[href="addProject.html"]');
-            if (userInfo.type === "PROFESSOR") {
-                submitNewRequestLink.style.display = 'none';
-            }
+        // Show/hide menu items based on user type
+        const submitNewRequestLink = document.querySelector('a[href="addProject.html"]');
+        if (userInfo.type === "PROFESSOR") {
+            submitNewRequestLink.style.display = 'none';
+        }
 
-            if (userInfo.type === "ORGANIZATION") {
-                loadProjectsByOrganization(userInfo.id);
-            } else {
-                printProjects();
-            }
+        if (userInfo.type === "ORGANIZATION") {
+            loadProjectsByOrganization(userInfo.id);
+        } else {
+            printProjects();
         }
     });
 

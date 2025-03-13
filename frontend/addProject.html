@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Project</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/auth.js"></script>
 </head>
 <body>
 <div class="header">
@@ -109,15 +110,27 @@
 </footer>
 
 <script>
+    window.addEventListener('load', function() {
+        if (!checkAuthentication()) return;
+        
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        if (userInfo.type !== "ORGANIZATION") {
+            alert("Only organizations can add new projects.");
+            window.location.href = 'index.html';
+        }
+    });
+
     document.getElementById('projectForm').addEventListener('submit', async function(event) {
         event.preventDefault();
 
         const messageDiv = document.getElementById('message');
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        console.log('User Info:', userInfo);  
         
         if (!userInfo || !userInfo.id) {
             messageDiv.innerHTML = '<p class="error">Error: User information not found. Please login again.</p>';
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
             return;
         }
 

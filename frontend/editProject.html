@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Project</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/auth.js"></script>
 </head>
 <body>
 <div class="header">
@@ -114,17 +115,15 @@
 
 <script>
     window.addEventListener('load', async function() {
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        if (!userInfo) {
-            window.location.href = 'login.html';
-            return;
-        }
+        if (!checkAuthentication()) return;
 
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         const urlParams = new URLSearchParams(window.location.search);
         const projectId = urlParams.get('id');
         const viewMode = urlParams.get('mode') === 'view';
 
         if (!projectId) {
+            alert('Project ID is required');
             window.location.href = 'index.html';
             return;
         }
