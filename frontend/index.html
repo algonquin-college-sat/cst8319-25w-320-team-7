@@ -21,7 +21,9 @@
 <div class="main-container with-sidebar">
     <div class="sidebar">
         <nav class="nav-menu">
-            <a href="addProject.html" class="menu-item">+ Submit New Request</a>
+            <a href="addProject.html" class="menu-item">Submit New Request</a>
+            <a href="#" class="menu-item" onclick="sortByProjectName()">Sort by Project Name</a>
+            <a href="#" class="menu-item" onclick="sortBySemester()">Sort by Semester</a>
         </nav>
     </div>
 
@@ -45,6 +47,12 @@
         if (!userInfo) {
             window.location.href = 'login.html';
         } else {
+            // Show/hide menu items based on user type
+            const submitNewRequestLink = document.querySelector('a[href="addProject.html"]');
+            if (userInfo.type === "PROFESSOR") {
+                submitNewRequestLink.style.display = 'none';
+            }
+
             if (userInfo.type === "ORGANIZATION") {
                 loadProjectsByOrganization(userInfo.id);
             } else {
@@ -57,6 +65,50 @@
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         window.location.href = 'login.html';
+    }
+
+    function sortByProjectName() {
+        const container = document.getElementById('projects-container');
+        const projectCards = Array.from(container.children);
+
+        projectCards.sort((a, b) => {
+            const nameA = a.querySelector('h3').textContent.toLowerCase();
+            const nameB = b.querySelector('h3').textContent.toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+
+        container.innerHTML = '';
+        projectCards.forEach(card => container.appendChild(card));
+    }
+
+    function getSemesterWeight(semester) {
+        const [term, year] = semester.split('_');
+        const yearWeight = parseInt(year) * 3;
+        
+        let termWeight;
+        switch(term) {
+            case 'WINTER': termWeight = 0; break;
+            case 'SPRING': termWeight = 1; break;
+            case 'FALL': termWeight = 2; break;
+            default: termWeight = 3;
+        }
+        
+        return yearWeight + termWeight;
+    }
+
+    function sortBySemester() {
+        const container = document.getElementById('projects-container');
+        const projectCards = Array.from(container.children);
+
+        projectCards.sort((a, b) => {
+            const semesterA = a.querySelector('p:nth-of-type(2)').textContent.split(': ')[1];
+            const semesterB = b.querySelector('p:nth-of-type(2)').textContent.split(': ')[1];
+            
+            return getSemesterWeight(semesterA) - getSemesterWeight(semesterB);
+        });
+
+        container.innerHTML = '';
+        projectCards.forEach(card => container.appendChild(card));
     }
 
     async function loadProjectsByOrganization(organizationId) {
