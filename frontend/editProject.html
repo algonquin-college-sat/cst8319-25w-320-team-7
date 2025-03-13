@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Project</title>
+    <title>Edit Project</title>
     <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
@@ -20,16 +20,17 @@
 
 <div class="main-container project-page">
     <div class="form-container project-form">
-        <h2 class="project-title">Tell Us About Your Project</h2>
+        <h2 class="project-title">Project Details</h2>
         <p class="form-note">Fields marked with <span class="required">*</span> are required</p>
         <form id="projectForm">
+            <input type="hidden" id="projectId">
             <div class="form-group">
                 <label for="projectName">Project Name <span class="required">*</span></label>
                 <input type="text" id="projectName" placeholder="Enter here..." required>
             </div>
             <div class="form-group">
                 <label for="description">Project Description <span class="required">*</span></label>
-                <p class="field-note">We do not need full requirements, this description will be used to advertise your project to our students during the matching process.  We need 3-5 sentences about what you are looking to achieve, please specify whether they will be building upon an existing product or creating one from scratch.  If one exists and you are aware of the technology used, please provide those details as well. Full requirements will be gathered by the student team.</p>
+                <p class="field-note">We do not need full requirements, this description will be used to advertise your project to our students during the matching process. We need 3-5 sentences about what you are looking to achieve, please specify whether they will be building upon an existing product or creating one from scratch. If one exists and you are aware of the technology used, please provide those details as well. Full requirements will be gathered by the student team.</p>
                 <textarea id="description" placeholder="Enter here..." required rows="4"></textarea>
             </div>
             <div class="form-group">
@@ -96,11 +97,14 @@
                 </div>
             </div>
             <div class="form-group button-group">
-                <button type="submit" class="submit-btn">Submit</button>
+                <button type="submit" class="submit-btn">Update</button>
                 <button type="button" class="cancel-btn" onclick="window.location.href='index.html'">Cancel</button>
             </div>
         </form>
         <div id="message" class="message-container"></div>
+        <div class="back-button-container">
+            <button type="button" class="back-btn" onclick="window.location.href='index.html'" style="display: none;">Back to List</button>
+        </div>
     </div>
 </div>
 
@@ -109,48 +113,102 @@
 </footer>
 
 <script>
+    window.addEventListener('load', async function() {
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        if (!userInfo) {
+            window.location.href = 'login.html';
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const projectId = urlParams.get('id');
+        const viewMode = urlParams.get('mode') === 'view';
+
+        if (!projectId) {
+            window.location.href = 'index.html';
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/project/${projectId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch project details');
+            }
+
+            const project = await response.json();
+            
+            // Populate form fields
+            document.getElementById('projectId').value = projectId;
+            document.getElementById('projectName').value = project.projectName;
+            document.getElementById('description').value = project.description;
+            document.getElementById('availableTime').value = project.availableTime;
+            document.getElementById('purchasingRequirements').value = project.purchasingRequirements || '';
+            document.getElementById('semester').value = project.semester;
+            document.querySelector(`input[name="ndaRequired"][value="${project.ndaRequired}"]`).checked = true;
+            document.querySelector(`input[name="showcaseAllowed"][value="${project.showcaseAllowed}"]`).checked = true;
+
+            // If in view mode or user is professor, disable all form elements
+            if (viewMode || userInfo.type === 'PROFESSOR') {
+                const form = document.getElementById('projectForm');
+                form.classList.add('form-disabled');
+                
+                // Disable all form elements
+                const formElements = form.querySelectorAll('input, textarea, select');
+                formElements.forEach(element => {
+                    element.disabled = true;
+                });
+
+                // Change page title
+                document.querySelector('.project-title').textContent = 'Project Details';
+
+                // Show back button for professors
+                if (userInfo.type === 'PROFESSOR') {
+                    document.querySelector('.back-btn').style.display = 'block';
+                }
+            }
+
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('message').innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        }
+    });
+
     document.getElementById('projectForm').addEventListener('submit', async function(event) {
         event.preventDefault();
 
         const messageDiv = document.getElementById('message');
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        console.log('User Info:', userInfo);  
-        
-        if (!userInfo || !userInfo.id) {
-            messageDiv.innerHTML = '<p class="error">Error: User information not found. Please login again.</p>';
-            return;
-        }
+        const projectId = document.getElementById('projectId').value;
 
         const projectData = {
+            id: projectId,
             projectName: document.getElementById('projectName').value.trim(),
             description: document.getElementById('description').value.trim(),
             availableTime: parseInt(document.getElementById('availableTime').value),
             purchasingRequirements: document.getElementById('purchasingRequirements').value.trim() || null,
             ndaRequired: document.querySelector('input[name="ndaRequired"]:checked').value === 'true',
             showcaseAllowed: document.querySelector('input[name="showcaseAllowed"]:checked').value === 'true',
-            semester: document.getElementById('semester').value,
-            organizationId: userInfo.id  
+            semester: document.getElementById('semester').value
         };
-
-        console.log('Sending project data:', projectData);
 
         try {
             const response = await fetch('http://localhost:8080/api/project', {
-                method: 'POST',
+                method: 'PUT',
                 headers: { 
-                    'Content-Type': 'application/json', 
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
                 body: JSON.stringify(projectData)
             });
 
             const responseData = await response.json();
-            console.log('Response status:', response.status);
-            console.log('Response data:', responseData);
 
             if (response.ok) {
-                clearForm();
-                messageDiv.innerHTML = '<p class="success">Project submitted successfully!</p>';
+                messageDiv.innerHTML = '<p class="success">Project updated successfully!</p>';
                 setTimeout(() => {
                     window.location.href = 'index.html';
                 }, 2000);
@@ -159,23 +217,14 @@
                     const errorMessages = responseData.map(error => `${error.message}`).join(', ');
                     messageDiv.innerHTML = `<p class="error">Error: ${errorMessages}</p>`;
                 } else {
-                    messageDiv.innerHTML = `<p class="error">Error: ${responseData.message || 'Failed to submit project'}</p>`;
+                    messageDiv.innerHTML = `<p class="error">Error: ${responseData.message || 'Failed to update project'}</p>`;
                 }
             }
         } catch (error) {
-            console.error('Full error:', error);
+            console.error('Error updating project:', error);
             messageDiv.innerHTML = `<p class="error">Error: ${error.message}</p>`;
         }
     });
-
-    document.getElementById('projectForm').onsubmit = function() {
-        return false;
-    };
-
-    function clearForm() {
-        document.getElementById('projectForm').reset();
-        document.getElementById('message').innerHTML = '';
-    }
 
     function logout() {
         localStorage.removeItem('token');
@@ -184,4 +233,4 @@
     }
 </script>
 </body>
-</html>
+</html> 

@@ -21,12 +21,17 @@
 <div class="main-container with-sidebar">
     <div class="sidebar">
         <nav class="nav-menu">
-            <a href="addProject.html" class="menu-item">Submit project request</a>
+            <a href="addProject.html" class="menu-item">+ Submit New Request</a>
         </nav>
+    </div>
 
-        <nav class="nav-menu">
-            <a href="listProject.html" class="menu-item">List projects</a>
-        </nav>
+    <div class="content">
+        <div class="form-container" id="projects">
+            <h2>Project List</h2>
+            <div id="projects-container">
+                <!-- projects will be loaded here -->
+            </div>
+        </div>
     </div>
 </div>
 
@@ -39,6 +44,12 @@
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         if (!userInfo) {
             window.location.href = 'login.html';
+        } else {
+            if (userInfo.type === "ORGANIZATION") {
+                loadProjectsByOrganization(userInfo.id);
+            } else {
+                printProjects();
+            }
         }
     });
 
@@ -46,6 +57,93 @@
         localStorage.removeItem('token');
         localStorage.removeItem('userInfo');
         window.location.href = 'login.html';
+    }
+
+    async function loadProjectsByOrganization(organizationId) {
+        const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
+    
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+    
+            const projects = data.projects || data; 
+            
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+    
+            if (projects.length === 0) {
+                container.innerHTML = "<p>No projects found.</p>";
+                return;
+            }
+    
+            projects.forEach(project => {
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'project-card';
+    
+                projectDiv.innerHTML = `
+                    <div class="project-header">
+                        <h3>${project.projectName}</h3>
+                        <div class="button-group-horizontal">
+                            <button onclick="window.location.href='editProject.html?id=${project.id}'" class="edit-btn">View/Edit</button>
+                        </div>
+                    </div>
+                    <p class="description-line"><strong>Description:</strong> ${project.description}</p>
+                    <p><strong>Semester:</strong> ${project.semester}</p>
+                    <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                    <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                    <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                `;
+    
+                container.appendChild(projectDiv);
+            });
+    
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+        }
+    }
+
+    async function printProjects() {
+        const apiUrl = 'http://localhost:8080/api/project';
+        
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+    
+            const projects = data.projects || data;
+                
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+    
+            if (projects.length === 0) {
+                container.innerHTML = "<p>No projects found.</p>";
+                return;
+            }
+    
+            projects.forEach(project => {
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'project-card';
+        
+                projectDiv.innerHTML = `
+                    <div class="project-header">
+                        <h3>${project.projectName}</h3>
+                        <div class="button-group-horizontal">
+                            <button onclick="window.location.href='editProject.html?id=${project.id}&mode=view'" class="view-btn">View Detail</button>
+                            <button onclick="handleManageTag(${project.id})" class="manage-btn">Manage Tag</button>
+                        </div>
+                    </div>
+                    <p class="description-line"><strong>Description:</strong> ${project.description}</p>
+                    <p><strong>Semester:</strong> ${project.semester}</p>
+                    <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                    <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                    <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                `;
+    
+                container.appendChild(projectDiv);
+            });
+    
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+        }
     }
 </script>
 </body>

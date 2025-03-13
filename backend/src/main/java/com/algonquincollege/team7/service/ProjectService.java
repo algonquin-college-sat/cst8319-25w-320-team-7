@@ -1,9 +1,6 @@
 package com.algonquincollege.team7.service;
 
-import com.algonquincollege.team7.dto.ProjectListRequest;
-import com.algonquincollege.team7.dto.ProjectListResponse;
-import com.algonquincollege.team7.dto.ProjectListResponseWrapper;
-import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
+import com.algonquincollege.team7.dto.*;
 import com.algonquincollege.team7.infra.exception.ApiException;
 import com.algonquincollege.team7.model.Project;
 import com.algonquincollege.team7.model.UserType;
@@ -32,28 +29,20 @@ public class ProjectService {
     private UserRepository userRepository;
 
     public void registerProject(@RequestBody @Valid ProjectRegistrationRequest data) {
-        try {
-            var invalidOrganizationId = !userRepository.existsByIdAndType(
-                data.organizationId(), 
-                UserType.valueOf("ORGANIZATION")
-            );
-            
-            if (invalidOrganizationId) {
-                throw new ApiException(HttpStatus.CONFLICT, "Invalid organization ID");
-            }
-
-            var user = userRepository.findById(data.organizationId())
-                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Organization not found"));
-
-            var project = new Project(data, user);
-            projectRepository.save(project);
-            
-        } catch (Exception e) {
-            throw new ApiException(
-                HttpStatus.BAD_REQUEST, 
-                "Error registering project: " + e.getMessage()
-            );
+        var invalidOrganizationId = !userRepository.existsByIdAndType(
+            data.organizationId(), 
+            UserType.valueOf("ORGANIZATION")
+        );
+        
+        if (invalidOrganizationId) {
+            throw new ApiException(HttpStatus.CONFLICT, "Invalid organization ID");
         }
+
+        var user = userRepository.findById(data.organizationId())
+            .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Organization not found"));
+
+        var project = new Project(data, user);
+        projectRepository.save(project);
     }
 
     public ProjectListResponseWrapper getProjectsByOrganizationId(Long organizationId, ProjectListRequest request) {
@@ -91,8 +80,31 @@ public class ProjectService {
 
     public ProjectListResponseWrapper getAllProjects() {
         List<Project> projects = projectRepository.findAll(); 
-        List<ProjectListResponse> projectResponses = projects.stream().map(ProjectListResponse::fromProject).collect(Collectors.toList());
+        List<ProjectListResponse> projectResponses = projects.stream()
+            .map(ProjectListResponse::fromProject)
+            .collect(Collectors.toList());
 
-        return new ProjectListResponseWrapper(projectResponses, 0, projects.size(), projects.size(), 1);
+        return new ProjectListResponseWrapper(
+            projectResponses, 
+            0, 
+            projects.size(), 
+            projects.size(), 
+            1
+        );
+    }
+
+    public ProjectViewResponse findProjectById(Long projectId) {
+        var project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Project not found"));
+
+        return new ProjectViewResponse(project);
+    }
+
+    public void editProject(@RequestBody @Valid ProjectEditRequest data) {
+        var project = projectRepository.findById(data.id())
+                .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Project not found"));
+
+        project.updateFrom(data);
+        projectRepository.save(project);
     }
 }

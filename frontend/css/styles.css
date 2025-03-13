@@ -396,12 +396,12 @@ button:hover {
 }
 
 .submit-btn {
-    background-color: var(--primary-color);
+    background-color: #0a8554;
     color: white;
 }
 
 .submit-btn:hover {
-    background-color: var(--primary-hover);
+    background-color: #097548;
 }
 
 .cancel-btn {
@@ -456,19 +456,24 @@ button:hover {
     cursor: pointer;
 }
 
-/* 添加侧边栏相关样式 */
 .with-sidebar {
     display: flex !important;
-    gap: 2rem;
+    gap: 3rem;
     align-items: flex-start !important;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
 }
 
 .sidebar {
-    width: 250px;
+    width: 220px;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 1rem;
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
 .nav-menu {
@@ -486,6 +491,9 @@ button:hover {
     text-decoration: none;
     border-radius: 6px;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    width: 100%;
+    font-size: 0.95rem;
 }
 
 .menu-item:hover {
@@ -499,35 +507,196 @@ button:hover {
 
 .content {
     flex: 1;
-    background-color: white;
     border-radius: 8px;
+    padding: 1rem;
+    background-color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 2rem;
+    max-width: 900px;
+    margin: 0;
 }
 
 /* listProject specific styling */
 #projects {
-    height: 500px;
+    height: 600px;
     overflow-y: auto; 
     padding-right: 10px;
 }
 
+#projects h2 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    margin-top: 0;
+    position: sticky;
+    top: 0;
+    background-color: white;
+    padding: 0.5rem 0;
+    z-index: 1;
+    border-bottom: 1px solid #eee;
+}
+
 .project-card {
-     margin-bottom: 20px; 
+    margin-bottom: 20px; 
     padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    background-color: #f9f9f9;
+    background-color: white;
+    width: 100%;
 }
 
 .project-card h3 {
-     margin-bottom: 10px; 
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    color: var(--primary-color);
 }
 
 .project-card p {
-    margin-bottom: 8px; 
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+}
+
+.project-card .description-line {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    padding-right: 20px;
 }
 
 .project-card strong {
     margin-right: 8px;
+    color: #444;
+}
+
+/* Project List specific styles */
+#projects.form-container {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.project-header h3 {
+    margin: 0;
+}
+
+.edit-btn {
+    background-color: #0a8554;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: auto;
+    transition: background-color 0.3s;
+}
+
+.edit-btn:hover {
+    background-color: #097548;
+}
+
+.button-group-horizontal {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-btn, .manage-btn {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    width: auto;
+    transition: background-color 0.3s;
+}
+
+.view-btn:hover, .manage-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.view-btn {
+    background-color: #2196F3;
+}
+
+.view-btn:hover {
+    background-color: #1976D2;
+}
+
+.manage-btn {
+    background-color: #FF9800;
+}
+
+.manage-btn:hover {
+    background-color: #F57C00;
+}
+
+/* Disabled form styles */
+.form-disabled input[type="text"],
+.form-disabled input[type="number"],
+.form-disabled textarea,
+.form-disabled select,
+.form-disabled input[type="radio"] {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.9;
+    color: #2c3338;
+    border-color: #e2e4e7;
+}
+
+.form-disabled .radio-label {
+    color: #2c3338;
+    opacity: 0.9;
+}
+
+.form-disabled input[type="radio"] {
+    opacity: 0.8;
+}
+
+.form-disabled input[type="radio"]:checked {
+    opacity: 1;
+    accent-color: #015235;
+    transform: scale(1.5);
+}
+
+.form-disabled textarea {
+    color: #2c3338;
+    line-height: 1.5;
+}
+
+.form-disabled .button-group {
+    display: none;
+}
+
+.back-button-container {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.back-btn {
+    background-color: #2196F3;
+    color: white;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    width: auto;
+    display: inline-block;
+}
+
+.back-btn:hover {
+    background-color: #1976D2;
 }

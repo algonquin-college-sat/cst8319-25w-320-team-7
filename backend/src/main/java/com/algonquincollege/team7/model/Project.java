@@ -1,6 +1,7 @@
 package com.algonquincollege.team7.model;
 
 import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
+import com.algonquincollege.team7.dto.ProjectEditRequest;
 import lombok.*;
 import jakarta.persistence.*;
 
@@ -65,5 +66,16 @@ public class Project {
         this.semester = data.semester();
         this.createdAt = LocalDateTime.now();
         this.organization = user;
+    }
+
+    public void updateFrom(ProjectEditRequest data) {
+        this.projectName = data.projectName();
+        this.description = data.description();
+        this.availableTime = data.availableTime();
+        this.purchasingRequirements = data.purchasingRequirements();
+        this.ndaRequired = data.ndaRequired();
+        this.showcaseAllowed = data.showcaseAllowed();
+        this.semester = data.semester();
+        this.updatedAt = LocalDateTime.now();
     }
 }
