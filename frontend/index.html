@@ -3,23 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
+    <title>Home</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/auth.js"></script>
 </head>
 <body>
 <div class="header">
-    <h2>Multi-disciplinary Project Platform</h2>
-    <div class="school-info">
-        <div>Algonquin College</div>
-        <div>School of Advanced Technology</div>
+    <h2>Multidisciplinary Project Request Platform</h2>
+    <div class="header-right">
+        <div class="school-info">
+            <div>Algonquin College</div>
+            <div>School of Advanced Technology</div>
+        </div>
+        <button onclick="logout()" class="logout-btn">Logout</button>
     </div>
 </div>
 
-<h1>This is a home page</h1>
+<div class="main-container with-sidebar">
+    <div class="sidebar">
+        <nav class="nav-menu">
+            <a href="addProject.html" class="menu-item">Submit New Request</a>
+            <a href="#" class="menu-item" onclick="sortByProjectName()">Sort by Project Name</a>
+            <a href="#" class="menu-item" onclick="sortBySemester()">Sort by Semester</a>
+        </nav>
+    </div>
+
+    <div class="content">
+        <div class="form-container" id="projects">
+            <h2>Project List</h2>
+            <div id="projects-container">
+                <!-- projects will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
 
 <footer class="footer">
     <p>© 2025 Algonquin College - School of Advanced Technology. All rights reserved.</p>
 </footer>
 
+<script>
+    window.addEventListener('load', function() {
+        if (!checkAuthentication()) return;
+        
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        // Show/hide menu items based on user type
+        const submitNewRequestLink = document.querySelector('a[href="addProject.html"]');
+        if (userInfo.type === "PROFESSOR") {
+            submitNewRequestLink.style.display = 'none';
+        }
+
+        if (userInfo.type === "ORGANIZATION") {
+            loadProjectsByOrganization(userInfo.id);
+        } else {
+            printProjects();
+        }
+    });
+
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('userInfo');
+        window.location.href = 'login.html';
+    }
+
+    function sortByProjectName() {
+        const container = document.getElementById('projects-container');
+        const projectCards = Array.from(container.children);
+
+        projectCards.sort((a, b) => {
+            const nameA = a.querySelector('h3').textContent.toLowerCase();
+            const nameB = b.querySelector('h3').textContent.toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
+
+        container.innerHTML = '';
+        projectCards.forEach(card => container.appendChild(card));
+    }
+
+    function getSemesterWeight(semester) {
+        const [term, year] = semester.split('_');
+        const yearWeight = parseInt(year) * 3;
+        
+        let termWeight;
+        switch(term) {
+            case 'WINTER': termWeight = 0; break;
+            case 'SPRING': termWeight = 1; break;
+            case 'FALL': termWeight = 2; break;
+            default: termWeight = 3;
+        }
+        
+        return yearWeight + termWeight;
+    }
+
+    function sortBySemester() {
+        const container = document.getElementById('projects-container');
+        const projectCards = Array.from(container.children);
+
+        projectCards.sort((a, b) => {
+            const semesterA = a.querySelector('p:nth-of-type(2)').textContent.split(': ')[1];
+            const semesterB = b.querySelector('p:nth-of-type(2)').textContent.split(': ')[1];
+            
+            return getSemesterWeight(semesterA) - getSemesterWeight(semesterB);
+        });
+
+        container.innerHTML = '';
+        projectCards.forEach(card => container.appendChild(card));
+    }
+
+    async function loadProjectsByOrganization(organizationId) {
+        const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
+    
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+    
+            const projects = data.projects || data; 
+            
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+    
+            if (projects.length === 0) {
+                container.innerHTML = "<p>No projects found.</p>";
+                return;
+            }
+    
+            projects.forEach(project => {
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'project-card';
+    
+                projectDiv.innerHTML = `
+                    <div class="project-header">
+                        <h3>${project.projectName}</h3>
+                        <div class="button-group-horizontal">
+                            <button onclick="window.location.href='editProject.html?id=${project.id}'" class="edit-btn">View/Edit</button>
+                        </div>
+                    </div>
+                    <p class="description-line"><strong>Description:</strong> ${project.description}</p>
+                    <p><strong>Semester:</strong> ${project.semester}</p>
+                    <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                    <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                    <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                `;
+    
+                container.appendChild(projectDiv);
+            });
+    
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+        }
+    }
+
+    async function printProjects() {
+        const apiUrl = 'http://localhost:8080/api/project';
+        
+        try {
+            const response = await fetch(apiUrl);
+            const data = await response.json();
+    
+            const projects = data.projects || data;
+                
+            const container = document.getElementById('projects-container');
+            container.innerHTML = '';
+    
+            if (projects.length === 0) {
+                container.innerHTML = "<p>No projects found.</p>";
+                return;
+            }
+    
+            projects.forEach(project => {
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'project-card';
+        
+                projectDiv.innerHTML = `
+                    <div class="project-header">
+                        <h3>${project.projectName}</h3>
+                        <div class="button-group-horizontal">
+                            <button onclick="window.location.href='editProject.html?id=${project.id}&mode=view'" class="view-btn">View Detail</button>
+                            <button onclick="handleManageTag(${project.id})" class="manage-btn">Manage Tag</button>
+                        </div>
+                    </div>
+                    <p class="description-line"><strong>Description:</strong> ${project.description}</p>
+                    <p><strong>Semester:</strong> ${project.semester}</p>
+                    <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                    <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                    <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                `;
+    
+                container.appendChild(projectDiv);
+            });
+    
+        } catch (error) {
+            console.error('Error fetching projects:', error);
+        }
+    }
+</script>
 </body>
 </html>

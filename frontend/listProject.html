@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Projects</title>
+    <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/auth.js"></script>
+</head>
+<body>
+    <div class="header">
+        <h2>Multi-disciplinary Project Platform</h2>
+        <div class="header-right">
+            <div class="school-info">
+                <div>Algonquin College</div>
+                <div>School of Advanced Technology</div>
+            </div>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="describe-section">
+            <h1>Available Projects</h1>
+            <p>Explore our current multi-disciplinary projects submitted by our industry partners.</p>
+            <ul class="feature-list">
+                <li>Filter projects by category or technology</li>
+                <li>Collaborate with diverse student teams</li>
+                <li>Gain real-world experience on real projects</li>
+                <li>Work under faculty mentorship and guidance</li>
+            </ul>
+            <div class="login-link">
+                <a href="index.html">Return</a>
+            </div>
+        </div>
+
+        <div class="form-container" id="projects">
+            <h2>Project List</h2>
+            <div id="projects-container">
+                <!-- projects -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 Algonquin College - School of Advanced Technology. All rights reserved.</p>
+    </footer>
+
+    <script>
+        window.addEventListener('load', async function() {
+            if (!checkAuthentication()) return;
+            
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+            if (userInfo.type === "ORGANIZATION") {
+                loadProjectsByOrganization(userInfo.id);
+            } else {
+                printProjects();
+            }
+        });
+
+        async function loadProjectsByOrganization(organizationId) {
+            const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
+    
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+    
+                const projects = data.projects || data; 
+                
+                const container = document.getElementById('projects-container');
+                container.innerHTML = '';
+    
+                if (projects.length === 0) {
+                    container.innerHTML = "<p>No projects found.</p>";
+                    return;
+                }
+    
+                projects.forEach(project => {
+                    const projectDiv = document.createElement('div');
+                    projectDiv.className = 'project-card';
+        
+                    projectDiv.innerHTML = `
+                        <h3>${project.projectName}</h3>
+                        <p><strong>Description:</strong> ${project.description}</p>
+                        <p><strong>Semester:</strong> ${project.semester}</p>
+                        <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                        <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                        <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                    `;
+    
+                    container.appendChild(projectDiv);
+                });
+    
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        }
+
+        async function printProjects() {
+            const apiUrl = 'http://localhost:8080/api/project';
+            
+            try {
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+        
+                const projects = data.projects || data;
+                    
+                const container = document.getElementById('projects-container');
+                container.innerHTML = '';
+        
+                if (projects.length === 0) {
+                    container.innerHTML = "<p>No projects found.</p>";
+                    return;
+                }
+        
+                projects.forEach(project => {
+                    const projectDiv = document.createElement('div');
+                    projectDiv.className = 'project-card';
+            
+                    projectDiv.innerHTML = `
+                        <h3>${project.projectName}</h3>
+                        <p><strong>Description:</strong> ${project.description}</p>
+                        <p><strong>Semester:</strong> ${project.semester}</p>
+                        <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
+                        <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
+                        <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
+                    `;
+            
+                    container.appendChild(projectDiv);
+                });
+        
+            } catch (error) {
+                console.error('Error fetching projects:', error);
+            }
+        }
+    </script>
+</body>
+</html>
