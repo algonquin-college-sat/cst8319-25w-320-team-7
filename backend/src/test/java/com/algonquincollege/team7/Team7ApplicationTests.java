@@ -30,7 +30,7 @@ public class Team7ApplicationTests {
 		// Verify the .env variable was loaded
 		assertEquals("team7", appName,
 				"SPRING_APPLICATION_NAME was not loaded from .env");
-		System.out.println("✅ SPRING_APPLICATION_NAME: " + appName);
+		System.out.println("SPRING_APPLICATION_NAME: " + appName);
 	}
 
 	@Test
