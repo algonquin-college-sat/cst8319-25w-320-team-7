@@ -62,7 +62,13 @@ API_SECURITY_TOKEN_SECRET=team7
 SERVER_ERROR_INCLUDE_STACKTRACE=never
 ```
 
-3. Build and run the application:
+3. Build the database inside MySql:
+
+```sql
+create database team7;
+```
+
+4. Build and run the application:
 
 ```bash
 mvn spring-boot:run
