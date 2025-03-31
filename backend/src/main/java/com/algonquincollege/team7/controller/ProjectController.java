@@ -1,18 +1,12 @@
 package com.algonquincollege.team7.controller;
 
-import com.algonquincollege.team7.dto.ProjectListRequest;
-import com.algonquincollege.team7.dto.ProjectListResponseWrapper;
-import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
-import com.algonquincollege.team7.dto.ProjectRegistrationResponse;
-import com.algonquincollege.team7.dto.ProjectEditRequest;
-import com.algonquincollege.team7.dto.ProjectEditResponse;
-import com.algonquincollege.team7.dto.ProjectViewResponse;
+import com.algonquincollege.team7.dto.*;
 import com.algonquincollege.team7.service.ProjectService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/project")
@@ -26,7 +20,7 @@ public class ProjectController {
     public ResponseEntity registerProject(@RequestBody @Valid ProjectRegistrationRequest data) {
 
         projectService.registerProject(data);
-        var responseOk = new ProjectRegistrationResponse("Project registered successfully");
+        var responseOk = new GeneralResponse("Project registered successfully");
         return ResponseEntity.ok(responseOk);
     }
 
@@ -56,7 +50,7 @@ public class ProjectController {
     public ResponseEntity editProject(@RequestBody @Valid ProjectEditRequest data) {
 
         projectService.editProject(data);
-        var responseOk = new ProjectEditResponse("Project updated successfully");
+        var responseOk = new GeneralResponse("Project updated successfully");
         return ResponseEntity.ok(responseOk);
     }
 }

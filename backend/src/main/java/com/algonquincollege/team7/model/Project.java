@@ -1,9 +1,9 @@
 package com.algonquincollege.team7.model;
 
-import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
 import com.algonquincollege.team7.dto.ProjectEditRequest;
-import lombok.*;
+import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
