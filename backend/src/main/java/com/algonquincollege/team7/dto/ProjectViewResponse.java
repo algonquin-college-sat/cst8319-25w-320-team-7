@@ -5,6 +5,8 @@ import com.algonquincollege.team7.model.Semester;
 import com.algonquincollege.team7.model.Validation;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record ProjectViewResponse(
         Long id,
@@ -17,7 +19,8 @@ public record ProjectViewResponse(
         Semester semester,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
-        String professorFeedback
+        String professorFeedback,
+        List<ProjectTagResponse> tags
 ) {
 
     public ProjectViewResponse(Project data, Validation validation) {
@@ -32,7 +35,8 @@ public record ProjectViewResponse(
                 data.getSemester(),
                 data.getCreatedAt(),
                 data.getUpdatedAt(),
-                validation != null ? validation.getProfessorFeedback() : null
+                validation != null ? validation.getProfessorFeedback() : null,
+                data.getTags().stream().map(ProjectTagResponse::new).collect(Collectors.toList())
         );
     }
 

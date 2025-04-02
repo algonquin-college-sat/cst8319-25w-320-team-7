@@ -4,6 +4,8 @@ import com.algonquincollege.team7.model.Project;
 import com.algonquincollege.team7.model.Semester;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public record ProjectListResponse(
         Long id,
@@ -12,7 +14,9 @@ public record ProjectListResponse(
         Semester semester,
         Boolean ndaRequired,
         Boolean showcaseAllowed,
-        LocalDateTime createdAt
+        LocalDateTime createdAt,
+        List<ProjectTagResponse>tags
+
 ) {
     public static ProjectListResponse fromProject(Project project) {
         return new ProjectListResponse(
@@ -22,7 +26,8 @@ public record ProjectListResponse(
                 project.getSemester(),
                 project.getNdaRequired(),
                 project.getShowcaseAllowed(),
-                project.getCreatedAt()
+                project.getCreatedAt(),
+                project.getTags().stream().map(ProjectTagResponse::new).collect(Collectors.toList())
         );
     }
 }
