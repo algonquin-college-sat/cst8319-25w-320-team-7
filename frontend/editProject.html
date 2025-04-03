@@ -103,8 +103,40 @@
             </div>
         </form>
         <div id="message" class="message-container"></div>
-        <div class="back-button-container">
-            <button type="button" class="back-btn" onclick="window.location.href='index.html'" style="display: none;">Back to List</button>
+
+        <!-- Tag Management Section -->
+        <div class="tag-management-section" id="tagManagementSection" style="display: none;">
+            <h3>Manage Tags</h3>
+            <div class="tag-labels">
+                <div class="tag-type-label">Tag Type</div>
+                <div class="tag-value-label">Tag Value</div>
+            </div>
+            <div id="tagSelectionContainer">
+                <div class="tag-selection-row">
+                    <div class="tag-type-container">
+                        <select class="tag-type-select">
+                            <option value="" disabled selected>Select Tag Type</option>
+                        </select>
+                    </div>
+                    <div class="tag-value-container">
+                        <div class="tag-value-group">
+                            <select class="tag-value-select">
+                                <option value="" disabled selected>Select Tag Value</option>
+                            </select>
+                            <button class="add-tag-btn" onclick="addTagRow(this)">+</button>
+                            <button class="remove-tag-btn" onclick="removeTagRow(this)">−</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tag-save-container">
+                <button onclick="saveAllTags()" class="save-tags-btn">Save</button>
+            </div>
+        </div>
+
+        <!-- Back to List Button -->
+        <div class="back-button-container" id="backButtonContainer" style="display: none;">
+            <button onclick="window.location.href='index.html'" class="back-btn">Back to List</button>
         </div>
     </div>
 </div>
@@ -126,6 +158,16 @@
             alert('Project ID is required');
             window.location.href = 'index.html';
             return;
+        }
+
+        // Show/hide tag management section and back button based on user type
+        const tagManagementSection = document.getElementById('tagManagementSection');
+        const backButtonContainer = document.getElementById('backButtonContainer');
+        if (userInfo.type === "PROFESSOR") {
+            tagManagementSection.style.display = 'block';
+            backButtonContainer.style.display = 'block';
+            await loadTagTypes();
+            await loadProjectTags();
         }
 
         try {
@@ -156,16 +198,13 @@
                 const form = document.getElementById('projectForm');
                 form.classList.add('form-disabled');
                 
-                // Disable all form elements
                 const formElements = form.querySelectorAll('input, textarea, select');
                 formElements.forEach(element => {
                     element.disabled = true;
                 });
 
-                // Change page title
                 document.querySelector('.project-title').textContent = 'Project Details';
 
-                // Show back button for professors
                 if (userInfo.type === 'PROFESSOR') {
                     document.querySelector('.back-btn').style.display = 'block';
                 }
@@ -230,6 +269,317 @@
         localStorage.removeItem('userInfo');
         window.location.href = 'login.html';
     }
+
+    // Tag Management Functions
+    let tagTypes = [];
+    let tagValues = {};
+    let currentProjectTags = [];
+
+    async function loadTagTypes() {
+        try {
+            const response = await fetch('http://localhost:8080/api/tag_value');
+            const valueData = await response.json();
+            console.log('Tag Values:', valueData);
+            
+            const uniqueTypes = [...new Set(valueData.map(tag => tag.tagType))];
+            console.log('Unique Tag Types:', uniqueTypes);
+            
+            const groupedTags = {};
+            uniqueTypes.forEach(type => {
+                groupedTags[type] = valueData
+                    .filter(value => value.tagType === type)
+                    .map(value => ({
+                        id: value.id,
+                        value: value.tagValue
+                    }));
+            });
+            console.log('Grouped Tags:', groupedTags);
+
+            tagValues = groupedTags;
+            
+            const typeSelects = document.querySelectorAll('.tag-type-select');
+            typeSelects.forEach(select => {
+                select.innerHTML = '<option value="" disabled selected>Select Tag Type</option>';
+                Object.keys(tagValues).forEach(type => {
+                    const option = document.createElement('option');
+                    option.value = type;
+                    option.textContent = type;
+                    select.appendChild(option);
+                });
+            });
+
+            if (currentProjectTags && currentProjectTags.length > 0) {
+                displayProjectTags();
+            }
+        } catch (error) {
+            console.error('Error loading tag types:', error);
+        }
+    }
+
+    function initializeTagSelects() {
+        const firstRow = document.querySelector('.tag-selection-row');
+        const typeSelect = firstRow.querySelector('.tag-type-select');
+        
+        typeSelect.innerHTML = '<option value="" disabled selected>Select Tag Type</option>';
+        Object.keys(tagValues).forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeSelect.appendChild(option);
+        });
+
+        typeSelect.addEventListener('change', (e) => updateTagValueSelect(e.target));
+    }
+
+    function updateTagValueSelect(typeSelect) {
+        const row = typeSelect.closest('.tag-selection-row');
+        const valueSelect = row.querySelector('.tag-value-select');
+        const selectedType = typeSelect.value;
+
+        console.log('Updating tag value select for type:', selectedType);
+        console.log('Available tag values for type:', tagValues[selectedType]);
+
+        valueSelect.innerHTML = '<option value="" disabled selected>Select Tag Value</option>';
+        
+        if (selectedType && tagValues[selectedType]) {
+            tagValues[selectedType].forEach(tag => {
+                const option = document.createElement('option');
+                option.value = tag.id;
+                option.textContent = tag.value;
+                valueSelect.appendChild(option);
+            });
+        }
+    }
+
+    function addTagRow(btn) {
+        const container = document.getElementById('tagSelectionContainer');
+        const newRow = createTagRow();
+        container.appendChild(newRow);
+    }
+
+    function removeTagRow(btn) {
+        const row = btn.closest('.tag-selection-row');
+        const container = document.getElementById('tagSelectionContainer');
+        const rows = container.querySelectorAll('.tag-selection-row');
+        
+        row.remove();
+        
+        if (container.querySelectorAll('.tag-selection-row').length === 0) {
+            const newRow = createTagRow();
+            container.appendChild(newRow);
+        }
+    }
+
+    async function saveAllTags() {
+        const projectId = new URLSearchParams(window.location.search).get('id');
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
+        const rows = document.querySelectorAll('.tag-selection-row');
+        const tags = [];
+
+        rows.forEach(row => {
+            const valueSelect = row.querySelector('.tag-value-select');
+            if (valueSelect.value) {
+                tags.push({
+                    projectId: parseInt(projectId),
+                    tagValueId: parseInt(valueSelect.value),
+                    professorId: userInfo.id
+                });
+            }
+        });
+
+        try {
+            await deleteAllProjectTags(projectId);
+
+            for (const tag of tags) {
+                await fetch('http://localhost:8080/api/project/tag', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify(tag)
+                });
+            }
+
+            // Show success message in a popup
+            const popup = document.createElement('div');
+            popup.className = 'popup-message';
+            popup.innerHTML = `
+                <div class="popup-content">
+                    <p>Tags saved successfully!</p>
+                    <button onclick="this.parentElement.parentElement.remove()">OK</button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+            
+            loadProjectTags();
+        } catch (error) {
+            console.error('Error saving tags:', error);
+            const popup = document.createElement('div');
+            popup.className = 'popup-message';
+            popup.innerHTML = `
+                <div class="popup-content">
+                    <p>Error saving tags</p>
+                    <button onclick="this.parentElement.parentElement.remove()">OK</button>
+                </div>
+            `;
+            document.body.appendChild(popup);
+        }
+    }
+
+    async function deleteAllProjectTags(projectId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/project/${projectId}`);
+            const data = await response.json();
+            const existingTags = data.tags || [];
+
+            for (const tag of existingTags) {
+                await fetch(`http://localhost:8080/api/project/tag/${tag.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error deleting existing tags:', error);
+            throw error;
+        }
+    }
+
+    async function loadProjectTags() {
+        const projectId = new URLSearchParams(window.location.search).get('id');
+        try {
+            const response = await fetch(`http://localhost:8080/api/project/${projectId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            const data = await response.json();
+            console.log('Project Data:', data);
+            
+            // Get project tags from the project data
+            if (data.tags && data.tags.length > 0) {
+                currentProjectTags = data.tags.map(tag => ({
+                    tagType: tag.tagType,
+                    tagValueId: tag.id,
+                    tagValue: tag.value
+                }));
+                console.log('Current Project Tags:', currentProjectTags);
+                await loadTagTypes();
+                displayProjectTags();
+            } else {
+                const container = document.getElementById('tagSelectionContainer');
+                container.innerHTML = '';
+                const row = createTagRow();
+                container.appendChild(row);
+            }
+        } catch (error) {
+            console.error('Error loading project tags:', error);
+        }
+    }
+
+    function displayProjectTags() {
+        const container = document.getElementById('tagSelectionContainer');
+        container.innerHTML = ''; 
+
+        // Displayexisting tags
+        if (currentProjectTags && currentProjectTags.length > 0) {
+            currentProjectTags.forEach((tag, index) => {
+                const row = createTagRow();
+                const typeSelect = row.querySelector('.tag-type-select');
+                const valueSelect = row.querySelector('.tag-value-select');
+                const removeBtn = row.querySelector('.remove-tag-btn');
+
+                console.log('Processing tag:', tag);
+                console.log('Available tag types:', Object.keys(tagValues));
+                console.log('Tag Type:', tag.tagType);
+                console.log('Tag Value:', tag.tagValue);
+
+                typeSelect.value = tag.tagType;
+                typeSelect.dispatchEvent(new Event('change'));
+                
+                setTimeout(() => {
+                    const options = Array.from(valueSelect.options);
+                    const matchingOption = options.find(opt => opt.text === tag.tagValue);
+                    if (matchingOption) {
+                        valueSelect.value = matchingOption.value;
+                    }
+                    console.log('Value select options:', options.map(opt => ({value: opt.value, text: opt.text})));
+                    console.log('Set value select:', valueSelect.value);
+                }, 100);
+
+                removeBtn.style.display = 'block';
+
+                container.appendChild(row);
+            });
+        } else {
+            const row = createTagRow();
+            container.appendChild(row);
+        }
+    }
+
+    function createTagRow() {
+        const row = document.createElement('div');
+        row.className = 'tag-selection-row';
+        row.innerHTML = `
+            <div class="tag-type-container">
+                <select class="tag-type-select">
+                    <option value="" disabled selected>Select Tag Type</option>
+                </select>
+            </div>
+            <div class="tag-value-container">
+                <div class="tag-value-group">
+                    <select class="tag-value-select">
+                        <option value="" disabled selected>Select Tag Value</option>
+                    </select>
+                    <button class="add-tag-btn" onclick="addTagRow(this)">+</button>
+                    <button class="remove-tag-btn" onclick="removeTagRow(this)">−</button>
+                </div>
+            </div>
+        `;
+
+        const typeSelect = row.querySelector('.tag-type-select');
+        typeSelect.addEventListener('change', (e) => updateTagValueSelect(e.target));
+
+        Object.keys(tagValues).forEach(type => {
+            const option = document.createElement('option');
+            option.value = type;
+            option.textContent = type;
+            typeSelect.appendChild(option);
+        });
+
+        return row;
+    }
+
+    async function deleteTag(tagId) {
+        try {
+            const response = await fetch(`http://localhost:8080/api/project/tag/${tagId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (response.ok) {
+                await loadProjectTags();
+                document.getElementById('message').innerHTML = '<p class="success">Tag deleted successfully!</p>';
+            } else {
+                const error = await response.json();
+                document.getElementById('message').innerHTML = `<p class="error">Error: ${error.message}</p>`;
+            }
+        } catch (error) {
+            console.error('Error deleting tag:', error);
+            document.getElementById('message').innerHTML = '<p class="error">Error deleting tag</p>';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const typeSelects = document.querySelectorAll('.tag-type-select');
+        typeSelects.forEach(select => {
+            select.addEventListener('change', (e) => updateTagValueSelect(e.target));
+        });
+    });
 </script>
 </body>
 </html> 

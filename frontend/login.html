@@ -78,10 +78,10 @@
                         window.location.href = 'index.html';
                     }, 1000);
                 } else {
-                    throw new Error(responseData.message || `Error: ${response.statusText}`);
+                    throw new Error('Invalid username or password.\nPlease try again.');
                 }
             } catch (error) {
-                document.getElementById('message').innerHTML = `<p class="error"> ${error.message}</p>`;
+                document.getElementById('message').innerHTML = `<p class="error">${error.message.replace('\n', '<br>')}</p>`;
             }
         });
 

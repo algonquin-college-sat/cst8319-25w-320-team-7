@@ -25,6 +25,7 @@
             <a href="addProject.html" class="menu-item">Submit New Request</a>
             <a href="#" class="menu-item" onclick="sortByProjectName()">Sort by Project Name</a>
             <a href="#" class="menu-item" onclick="sortBySemester()">Sort by Semester</a>
+            <a href="#" class="menu-item" onclick="sortBySubmissionTime()">Sort by Submission Time</a>
         </nav>
     </div>
 
@@ -110,6 +111,20 @@
         projectCards.forEach(card => container.appendChild(card));
     }
 
+    function sortBySubmissionTime() {
+        const container = document.getElementById('projects-container');
+        const projectCards = Array.from(container.children);
+
+        projectCards.sort((a, b) => {
+            const timeA = new Date(a.querySelector('p:last-child').textContent.split(': ')[1]);
+            const timeB = new Date(b.querySelector('p:last-child').textContent.split(': ')[1]);
+            return timeB - timeA; 
+        });
+
+        container.innerHTML = '';
+        projectCards.forEach(card => container.appendChild(card));
+    }
+
     async function loadProjectsByOrganization(organizationId) {
         const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
     
@@ -155,6 +170,7 @@
 
     async function printProjects() {
         const apiUrl = 'http://localhost:8080/api/project';
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         
         try {
             const response = await fetch(apiUrl);
@@ -170,27 +186,46 @@
                 return;
             }
     
-            projects.forEach(project => {
+            for (const project of projects) {
                 const projectDiv = document.createElement('div');
                 projectDiv.className = 'project-card';
         
-                projectDiv.innerHTML = `
+                let projectContent = `
                     <div class="project-header">
                         <h3>${project.projectName}</h3>
                         <div class="button-group-horizontal">
-                            <button onclick="window.location.href='editProject.html?id=${project.id}&mode=view'" class="view-btn">View Detail</button>
-                            <button onclick="handleManageTag(${project.id})" class="manage-btn">Manage Tag</button>
+                            <button onclick="window.location.href='editProject.html?id=${project.id}&mode=view'" class="view-btn">View/Evaluate</button>
                         </div>
                     </div>
                     <p class="description-line"><strong>Description:</strong> ${project.description}</p>
                     <p><strong>Semester:</strong> ${project.semester}</p>
                     <p><strong>NDA Required:</strong> ${project.ndaRequired ? 'Yes' : 'No'}</p>
                     <p><strong>Showcase Allowed:</strong> ${project.showcaseAllowed ? 'Yes' : 'No'}</p>
-                    <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>
-                `;
-    
+                    <p><strong>Created At:</strong> ${new Date(project.createdAt).toLocaleString()}</p>`;
+
+                // Add tags section for professor users
+                if (userInfo.type === "PROFESSOR" && project.tags && project.tags.length > 0) {
+                    // Group tags by tag type
+                    const groupedTags = project.tags.reduce((acc, tag) => {
+                        if (!acc[tag.tagType]) {
+                            acc[tag.tagType] = [];
+                        }
+                        acc[tag.tagType].push(tag.value);
+                        return acc;
+                    }, {});
+
+                    // Create tag display string with only values
+                    const tagDisplay = Object.values(groupedTags)
+                        .map(values => values.join(', '))
+                        .join(' | ');
+                    
+                    projectContent += `<p><strong>Tags:</strong> ${tagDisplay}</p>`;
+                }
+
+                projectContent += `</div>`;
+                projectDiv.innerHTML = projectContent;
                 container.appendChild(projectDiv);
-            });
+            }
     
         } catch (error) {
             console.error('Error fetching projects:', error);
