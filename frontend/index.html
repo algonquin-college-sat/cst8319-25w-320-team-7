@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/config.js"></script>
     <script src="./js/auth.js"></script>
 </head>
 <body>
@@ -126,7 +127,7 @@
     }
 
     async function loadProjectsByOrganization(organizationId) {
-        const apiUrl = `http://localhost:8080/api/project/organization/${organizationId}`;
+        const apiUrl = `${API_BASE_URL}/project/organization/${organizationId}`;
     
         try {
             const response = await fetch(apiUrl);
@@ -169,7 +170,7 @@
     }
 
     async function printProjects() {
-        const apiUrl = 'http://localhost:8080/api/project';
+        const apiUrl = `${API_BASE_URL}/project`;
         const userInfo = JSON.parse(localStorage.getItem('userInfo'));
         
         try {

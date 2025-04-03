@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Project</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/config.js"></script>
     <script src="./js/auth.js"></script>
 </head>
 <body>
@@ -171,7 +172,7 @@
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/project/${projectId}`, {
+            const response = await fetch(`${API_BASE_URL}/project/${projectId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -234,7 +235,7 @@
         };
 
         try {
-            const response = await fetch('http://localhost:8080/api/project', {
+            const response = await fetch(`${API_BASE_URL}/project`, {
                 method: 'PUT',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -277,7 +278,11 @@
 
     async function loadTagTypes() {
         try {
-            const response = await fetch('http://localhost:8080/api/tag_value');
+            const response = await fetch(`${API_BASE_URL}/tag_value`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             const valueData = await response.json();
             console.log('Tag Values:', valueData);
             
@@ -391,7 +396,7 @@
             await deleteAllProjectTags(projectId);
 
             for (const tag of tags) {
-                await fetch('http://localhost:8080/api/project/tag', {
+                await fetch(`${API_BASE_URL}/project/tag`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -429,12 +434,16 @@
 
     async function deleteAllProjectTags(projectId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/project/${projectId}`);
+            const response = await fetch(`${API_BASE_URL}/project/${projectId}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
             const data = await response.json();
             const existingTags = data.tags || [];
 
             for (const tag of existingTags) {
-                await fetch(`http://localhost:8080/api/project/tag/${tag.id}`, {
+                await fetch(`${API_BASE_URL}/project/tag/${tag.id}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('token')}`
@@ -450,7 +459,7 @@
     async function loadProjectTags() {
         const projectId = new URLSearchParams(window.location.search).get('id');
         try {
-            const response = await fetch(`http://localhost:8080/api/project/${projectId}`, {
+            const response = await fetch(`${API_BASE_URL}/project/${projectId}`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }
@@ -554,7 +563,7 @@
 
     async function deleteTag(tagId) {
         try {
-            const response = await fetch(`http://localhost:8080/api/project/tag/${tagId}`, {
+            const response = await fetch(`${API_BASE_URL}/project/tag/${tagId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
