@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="./css/styles.css">
+    <script src="./js/config.js"></script>
 </head>
 <body>
     <div class="header">
@@ -56,7 +57,7 @@
             };
 
             try {
-                const response = await fetch('http://localhost:8080/api/login', {
+                const response = await fetch(`${API_BASE_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(userData)
@@ -78,10 +79,10 @@
                         window.location.href = 'index.html';
                     }, 1000);
                 } else {
-                    throw new Error(responseData.message || `Error: ${response.statusText}`);
+                    throw new Error('Invalid username or password.\nPlease try again.');
                 }
             } catch (error) {
-                document.getElementById('message').innerHTML = `<p class="error"> ${error.message}</p>`;
+                document.getElementById('message').innerHTML = `<p class="error">${error.message.replace('\n', '<br>')}</p>`;
             }
         });
 

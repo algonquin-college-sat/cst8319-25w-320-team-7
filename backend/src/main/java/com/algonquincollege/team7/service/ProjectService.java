@@ -4,8 +4,10 @@ import com.algonquincollege.team7.dto.*;
 import com.algonquincollege.team7.infra.exception.ApiException;
 import com.algonquincollege.team7.model.Project;
 import com.algonquincollege.team7.model.UserType;
+import com.algonquincollege.team7.model.Validation;
 import com.algonquincollege.team7.repository.ProjectRepository;
 import com.algonquincollege.team7.repository.UserRepository;
+import com.algonquincollege.team7.repository.ValidationRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,6 +30,9 @@ public class ProjectService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ValidationRepository validationRepository;
 
     public void registerProject(@RequestBody @Valid ProjectRegistrationRequest data) {
         var invalidOrganizationId = !userRepository.existsByIdAndType(
@@ -97,7 +103,8 @@ public class ProjectService {
         var project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Project not found"));
 
-        return new ProjectViewResponse(project);
+        Optional<Validation> validation = validationRepository.findByProjectId(projectId);
+        return new ProjectViewResponse(project, validation.orElse(null));
     }
 
     public void editProject(@RequestBody @Valid ProjectEditRequest data) {

@@ -1,11 +1,12 @@
 package com.algonquincollege.team7.model;
 
-import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
 import com.algonquincollege.team7.dto.ProjectEditRequest;
-import lombok.*;
+import com.algonquincollege.team7.dto.ProjectRegistrationRequest;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -55,6 +56,9 @@ public class Project {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Tag> tags;
 
     public Project(ProjectRegistrationRequest data, User user) {
         this.projectName = data.projectName();
