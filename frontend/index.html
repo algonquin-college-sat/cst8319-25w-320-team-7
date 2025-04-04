@@ -75,7 +75,8 @@
         projectCards.sort((a, b) => {
             const nameA = a.querySelector('h3').textContent.toLowerCase();
             const nameB = b.querySelector('h3').textContent.toLowerCase();
-            return nameA.localeCompare(nameB);
+            
+            return nameA.localeCompare(nameB, undefined, {numeric: true, sensitivity: 'base'});
         });
 
         container.innerHTML = '';
@@ -117,8 +118,18 @@
         const projectCards = Array.from(container.children);
 
         projectCards.sort((a, b) => {
-            const timeA = new Date(a.querySelector('p:last-child').textContent.split(': ')[1]);
-            const timeB = new Date(b.querySelector('p:last-child').textContent.split(': ')[1]);
+            const getCreatedAt = (card) => {
+                const paragraphs = card.querySelectorAll('p');
+                for (const p of paragraphs) {
+                    if (p.textContent.includes('Created At')) {
+                        return new Date(p.textContent.split(': ')[1]);
+                    }
+                }
+                return new Date(0);
+            };
+
+            const timeA = getCreatedAt(a);
+            const timeB = getCreatedAt(b);
             return timeB - timeA; 
         });
 
@@ -215,7 +226,6 @@
                         return acc;
                     }, {});
 
-                    // Create tag display string with only values
                     const tagDisplay = Object.values(groupedTags)
                         .map(values => values.join(', '))
                         .join(' | ');
