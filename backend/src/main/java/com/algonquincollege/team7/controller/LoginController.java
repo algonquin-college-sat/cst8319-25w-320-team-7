@@ -14,16 +14,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for handling user authentication.
+ *
+ * Provides an endpoint for users to log in to the system and receive
+ * a JWT token for authenticated requests. Uses Spring Security's
+ * authentication framework to verify credentials.
+ *
+ * @see TokenService
+ * @see AuthenticationManager
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("api/login")
 public class LoginController {
 
+    /**
+     * Spring Security component for handling authentication.
+     */
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    /**
+     * Service for generating JWT tokens.
+     */
     @Autowired
     private TokenService tokenService;
 
+    /**
+     * Authenticates a user and generates an access token.
+     */
     @PostMapping
     public ResponseEntity loginUser(@RequestBody @Valid LoginRequest data) {
 

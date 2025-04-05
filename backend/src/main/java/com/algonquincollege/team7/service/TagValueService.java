@@ -14,15 +14,40 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
+/**
+ * Service class handling all business logic related to tag value management.
+ *
+ * Provides functionality for creating, updating, and retrieving tag values,
+ * including validation of tag type associations and uniqueness constraints.
+ *
+ * @see TagValue
+ * @see TagValueRepository
+ * @see TagTypeRepository
+ */
 @Service
 public class TagValueService {
 
+    /**
+     * Repository for tag value data access.
+     */
     @Autowired
     private TagValueRepository tagValueRepository;
 
+    /**
+     * Repository for tag type data access.
+     */
     @Autowired
     private TagTypeRepository tagTypeRepository;
 
+    /**
+     * Registers a new tag value associated with a tag type.
+     *
+     * @param data the tag value registration data
+     * @throws ApiException with CONFLICT status if:
+     *         - Tag value already exists for the given tag type
+     *         - Tag type ID is invalid
+     * @throws jakarta.persistence.EntityNotFoundException if tag type doesn't exist
+     */
     public void registerTagValue(@RequestBody @Valid TagValueRequest data) {
         validateTagValue(data);
 
@@ -32,6 +57,15 @@ public class TagValueService {
         tagValueRepository.save(tagValue);
     }
 
+    /**
+     * Updates an existing tag value.
+     *
+     * @param data the tag value update data
+     * @throws ApiException with CONFLICT status if:
+     *         - Tag value already exists for the given tag type
+     *         - Tag type ID is invalid
+     * @throws jakarta.persistence.EntityNotFoundException if tag value or tag type doesn't exist
+     */
     public void editTagValue(@RequestBody @Valid TagValueRequest data) {
         validateTagValue(data);
 
@@ -42,6 +76,14 @@ public class TagValueService {
         tagValueRepository.save(tagValue);
     }
 
+    /**
+     * Validates tag value data for uniqueness and tag type existence.
+     *
+     * @param data the tag value data to validate
+     * @throws ApiException with CONFLICT status if:
+     *         - Tag value already exists for the given tag type
+     *         - Tag type ID is invalid
+     */
     private void validateTagValue(@RequestBody @Valid TagValueRequest data) {
         var duplicatedTagValue = tagValueRepository.existsByValueAndTagTypeId(data.value(), data.tagTypeId());
         if (duplicatedTagValue) {
@@ -54,6 +96,11 @@ public class TagValueService {
         }
     }
 
+    /**
+     * Retrieves all tag values ordered by their associated tag type name.
+     *
+     * @return list of tag values with their type information
+     */
     public List<TagListResponse> getTagList() {
         return tagValueRepository.findAllOrderedByTagType()
                 .stream()

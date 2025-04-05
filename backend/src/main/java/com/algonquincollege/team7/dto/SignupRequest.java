@@ -6,6 +6,22 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
+/**
+ * Data Transfer Object (DTO) for user registration requests.
+ *
+ * Contains all required information to create a new user account in the system,
+ * with validation constraints to ensure data integrity and security.
+ *
+ * @param email User's email address (serves as username)
+ * @param firstName User's first name
+ * @param lastName User's last name
+ * @param organizationName Organization name (required for ORGANIZATION type)
+ * @param phone User's contact phone number
+ * @param type User's role/type in the system
+ * @param password User's password (will be hashed)
+ * @see UserType
+ * @since 1.0
+ */
 public record SignupRequest(
         @NotBlank(message = "Email is required")
         @Email(message = "Invalid email format")

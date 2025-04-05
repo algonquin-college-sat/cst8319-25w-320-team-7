@@ -9,18 +9,45 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class handling user-related business logic.
+ *
+ * Provides functionality for user registration and account management,
+ * including password encryption and duplicate user validation.
+ *
+ * @see User
+ * @see UserRepository
+ * @see SignupRequest
+ */
 @Service
 public class UserService {
 
+    /**
+     * Password encoder for securely hashing user passwords.
+     */
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Repository for user data access and persistence.
+     */
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Constructs a new UserService with the required password encoder.
+     *
+     * @param passwordEncoder the password encoder to use for securing passwords
+     */
     public UserService(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * Registers a new user in the system.
+     *
+     * @param data the user registration data
+     * @throws ApiException with CONFLICT status (409) if email is already registered
+     */
     public void signupUser(SignupRequest data) {
         var user = new User(data);
 
