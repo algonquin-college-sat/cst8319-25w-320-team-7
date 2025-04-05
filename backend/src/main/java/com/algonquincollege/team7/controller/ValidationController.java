@@ -9,14 +9,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for managing project validation operations.
+ *
+ * Provides endpoints for professors to submit and update project validations,
+ * including feedback and approval status. Supports cross-origin requests from
+ * the frontend application running on http://localhost:8080.
+ *
+ * @see ValidationService
+ * @see ValidationRequest
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("api/project/validation")
 @CrossOrigin(origins = "http://localhost:8080")
 public class ValidationController {
 
+    /**
+     * Service layer for handling validation business logic.
+     */
     @Autowired
     private ValidationService validationService;
 
+    /**
+     * Registers a new project validation.
+     */
     @PostMapping
     public ResponseEntity registerValidation(@RequestBody @Valid ValidationRequest data) {
         validationService.registerValidation(data);
@@ -25,6 +42,9 @@ public class ValidationController {
         return ResponseEntity.ok(responseOk);
     }
 
+    /**
+     * Updates an existing project validation.
+     */
     @Transactional
     @PutMapping
     public ResponseEntity editValidation(@RequestBody @Valid ValidationRequest data) {

@@ -12,13 +12,32 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+/**
+ * Service class handling JSON Web Token (JWT) generation and validation.
+ *
+ * This service is responsible for creating and verifying JWT tokens used for
+ * authentication and authorization in the application.
+ *
+ * @see User
+ */
 @Service
 public class TokenService {
     private static final String ISSUER = "API team7";
 
+    /**
+     * Secret key used for JWT signing and verification.
+     * Injected from application properties.
+     */
     @Value("${api.security.token.secret}")
     private String secret;
 
+    /**
+     * Generates a JWT token for the specified user.
+     *
+     * @param user the user to generate token for
+     * @return the generated JWT token string
+     * @throws RuntimeException if token creation fails
+     */
     public String buildToken(User user) {
         try {
             var algorithm = Algorithm.HMAC256(secret);
@@ -32,6 +51,13 @@ public class TokenService {
         }
     }
 
+    /**
+     * Extracts the subject (username) from a JWT token.
+     *
+     * @param tokenJWT the JWT token to verify
+     * @return the username (subject) from the token
+     * @throws RuntimeException if token verification fails (invalid or expired)
+     */
     public String getSubject(String tokenJWT) {
         try {
             var algorithm = Algorithm.HMAC256(secret);
@@ -46,6 +72,12 @@ public class TokenService {
         }
     }
 
+    /**
+     * Calculates the expiration time for tokens (24 hours from now).
+     * Uses UTC-5 timezone offset.
+     *
+     * @return the expiration Instant
+     */
     private Instant expiresAt() {
         return LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.of("-05:00"));
     }

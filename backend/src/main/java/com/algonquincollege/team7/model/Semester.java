@@ -1,5 +1,14 @@
 package com.algonquincollege.team7.model;
 
+/**
+ * Represents academic semesters in the system.
+ *
+ * This enum defines all possible semester values that can be assigned to projects,
+ * following the pattern of [SEASON]_[YEAR]. The seasons are FALL, WINTER, and SPRING,
+ * with year values ranging from 2025 to 2030.
+ *
+ * Example usage: {@code Semester.FALL_2025} represents Fall semester of 2025.
+ */
 public enum Semester {
     FALL_2025,
     WINTER_2025,

@@ -12,14 +12,32 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing tag value operations.
+ *
+ * Provides endpoints for creating, updating, and retrieving tag values
+ * (specific tags within tag types). Supports cross-origin requests from
+ * the frontend application running on http://localhost:8080.
+ *
+ * @see TagValueService
+ * @see TagValueRequest
+ * @see TagListResponse
+ * @since 1.0
+ */
 @RestController
 @RequestMapping("api/tag_value")
 @CrossOrigin(origins = "http://localhost:8080")
 public class TagValueController {
 
+    /**
+     * Service layer for handling tag value business logic.
+     */
     @Autowired
     private TagValueService tagValueService;
 
+    /**
+     * Registers a new tag value in the system.
+     */
     @PostMapping
     public ResponseEntity registerTagValue(@RequestBody @Valid TagValueRequest data) {
         tagValueService.registerTagValue(data);
@@ -28,6 +46,9 @@ public class TagValueController {
         return ResponseEntity.ok(responseOk);
     }
 
+    /**
+     * Updates an existing tag value.
+     */
     @Transactional
     @PutMapping
     public ResponseEntity editTagValue(@RequestBody @Valid TagValueRequest data) {
@@ -37,6 +58,9 @@ public class TagValueController {
         return ResponseEntity.ok(responseOk);
     }
 
+    /**
+     * Retrieves all tag values in the system with their associated types.
+     */
     @GetMapping
     public List<TagListResponse> getTagList() {
         return tagValueService.getTagList();
