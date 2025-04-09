@@ -9,13 +9,12 @@ The School of Advanced Technology is developing a project management system base
     - [Technologies Used](#technologies-used)
     - [Setup Instructions](#setup-instructions)
     - [Project Structure](#project-structure)
-    - [API Endpoints](#api-endpoints)
+    - [API Endpoints](#api-endpoints) 
 - [Frontend](#frontend)
     - [Technologies Used](#technologies-used-1)
     - [Setup Instructions](#setup-instructions-1)
-    - [Project Structure](#project-structure-1)
+    - [Project Structure](#project-structure)
 - [Database Migrations](#database-migrations)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Backend
@@ -87,54 +86,20 @@ mvn spring-boot:run
 
 ### API Endpoints
 
-#### Login
+| Method   | Endpoint                                  | Description                              | Details                                                             |
+|----------|-------------------------------------------|------------------------------------------|---------------------------------------------------------------------|
+| `POST`   | `/api/login`                             | User authentication.                     | [🔐 Login](api.md#login)                                            | 
+| `POST`   | `/api/signup`                            | New user registration.                   | [📝 Signup](api.md#signup)               |
+| `POST`   | `/api/project`                           | Create a new project.                    | [📦 Project Registration](api.md#project-registration)              |
+| `PUT`    | `/api/project`                           | Update an existing project.              | [✏️ Project Update](api.md#project-update)                          |
+| `GET`    | `/api/project/{idProject}`               | View project details.                    | [🔍 Project View](api.md#project-view)                              |
+| `GET`    | `/api/project/organization/{idOrganization}` | List projects by organization.      | [📋 Project List](api.md#project-list)                              |
+| `POST`   | `/api/project/validation`                | Professor project validation.            | [✅ Validation Registration](api.md#project-validation-registration) |
+| `PUT`    | `/api/project/validation`                | Update validation by professor.          | [🛠️ Validation Update](api.md#project-validation-update)           |
+| `POST`   | `/api/project/tag`                       | Add a tag to a project.                  | [🏷️ Tag Registration](api.md#project-tag-registration)             |
+| `DELETE` | `/api/project/tag/{tagId}`               | Remove a project tag.                    | [❌ Tag Exclusion](api.md#project-tag-exclusion)                     |
 
-**POST** `/api/login`
-
-Request Body:
-
-```json
-{
-  "email": "user@example.com",
-  "password": "yourpassword"
-}
-```
-
-Response:
-
-```json
-{
-  "token": "your-jwt-token"
-}
-```
-
-#### Signup
-
-**POST** `/api/signup`
-
-Request Body:
-
-```json
-{
-  "email": "user@example.com",
-  "firstName": "John",
-  "lastName": "Doe",
-  "organizationName": "Org",
-  "phone": "1234567890",
-  "type": "ORGANIZATION",
-  "password": "yourpassword"
-}
-```
-
-Response:
-
-```json
-{
-  "userName": "user@example.com",
-  "message": "User registered successfully"
-}
-```
-
+**📌 For parameters and examples, see the full [API Documentation](api.md#api-endpoints).**
 
 ## Frontend
 
@@ -157,9 +122,11 @@ cd cst8319-25w-320-team-7/frontend
 
 ## Database Migrations
 
-Flyway is enabled by default. Ensure your migration scripts are placed in `src/main/resources/db/migration`.
+Flyway is enabled by default. Ensure your migration scripts are placed in `backend/src/main/resources/db/migration`.
+
+- [How to change the database](flyway.md)
+- [Flyway tutorial](https://flywaydb.org/documentation/)
 
 ## License
 
 This project is licensed under the MIT License.
-
