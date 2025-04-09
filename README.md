@@ -92,8 +92,8 @@ mvn spring-boot:run
 | `POST`   | `/api/signup`                            | New user registration.                   | [📝 Signup](api.md#signup)               |
 | `POST`   | `/api/project`                           | Create a new project.                    | [📦 Project Registration](api.md#project-registration)              |
 | `PUT`    | `/api/project`                           | Update an existing project.              | [✏️ Project Update](api.md#project-update)                          |
-| `GET`    | `/api/project/{idProject}`               | View project details.                    | [🔍 Project View](api.md#project-view)                              |
-| `GET`    | `/api/project/organization/{idOrganization}` | List projects by organization.      | [📋 Project List](api.md#project-list)                              |
+| `GET`    | `/api/project/{id}`                      | View project details.                    | [🔍 Project View](api.md#project-view)                              |
+| `GET`    | `/api/project/organization/{id}`         | List projects by organization.      | [📋 Project List](api.md#project-list)                              |
 | `POST`   | `/api/project/validation`                | Professor project validation.            | [✅ Validation Registration](api.md#project-validation-registration) |
 | `PUT`    | `/api/project/validation`                | Update validation by professor.          | [🛠️ Validation Update](api.md#project-validation-update)           |
 | `POST`   | `/api/project/tag`                       | Add a tag to a project.                  | [🏷️ Tag Registration](api.md#project-tag-registration)             |
