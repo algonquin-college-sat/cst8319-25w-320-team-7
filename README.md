@@ -101,6 +101,16 @@ mvn spring-boot:run
 
 **📌 For parameters and examples, see the full [API Documentation](api.md#api-endpoints).**
 
+### Admin API Endpoints
+
+| Method | Endpoint                   | Description                   | Details                                                  |
+|--------|----------------------------|-------------------------------|----------------------------------------------------------|
+| `POST` | `/api/tag_type`            | Tag type registration.        | [✅ Tag Type Registration](api.md#tag-type-registration)  | 
+| `PUT`  | `/api/tag_type`            | Update an existing tag type.  | [🛠️ Tag Type Update](api.md#tag-type-update)            |
+| `POST` | `/api/tag_value`           | Tag value registration.       | [✅ Tag Value Registration](api.md#tag-value-registration) |
+| `PUT`  | `/api/tag_value`           | Update an existing tag value. | [🛠️ Tag Value Update](api.md#tag-value-update)          |
+| `GET`  | `/api/tag_value`           | List available tags.          | [📋 Tag Type/Value List](api.md#tag-typevalue-list)      |
+
 ## Frontend
 
 ### Technologies Used

@@ -12,7 +12,13 @@
   - [🛠️ Project Validation Update](#project-validation-update)
   - [🏷️ Project Tag Registration](#project-tag-registration)
   - [❌ Project Tag Deletion](#project-tag-exclusion)
-
+  
+- [Admin API Endpoints](#admin-api-endpoints)
+  - [✅ Tag Type Registration](#tag-type-registration)
+  - [🛠️ Tag Type Update](#tag-type-update)
+  - [✅ Tag Value Registration](#tag-value-registration)
+  - [🛠️ Tag Value Update](#tag-value-update)
+  - [📋 Tag Type/Value List](#tag-typevalue-list)
 ---
 
 ### Login
@@ -275,3 +281,159 @@
 ---
 
 
+### Tag Type Registration
+
+**POST** `/api/tag_type`
+
+**Request Body:**
+```json
+{
+  "name": "Course Name"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Tag type registered successfully"
+}
+```
+
+---
+
+### Tag Type Update
+
+**PUT** `/api/tag_type`
+
+**Request Body:**
+```json
+{
+  "id": 1,
+  "name": "Available Course"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Tag type updated successfully"
+}
+```
+
+---
+
+### Tag Value Registration
+
+**POST** `/api/tag_value`
+
+**Request Body:**
+```json
+{
+  "tagTypeId": 1,
+  "value": "Web Development and Internet Applications"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Tag value registered successfully"
+}
+```
+
+---
+
+### Tag Value Update
+
+**PUT** `/api/tag_value`
+
+**Request Body:**
+```json
+{
+  "id": 6,
+  "tagTypeId": 1,
+  "value": "Web Development and Internet Applications Co-Op"
+}
+```
+
+**Response:**
+```json
+{
+  "message": "Tag value updated successfully"
+}
+```
+
+---
+
+### Tag Type/Value List
+
+**GET** `/api/tag_value`
+
+
+**Response:**
+```json
+[
+  {
+    "id": 5,
+    "tagValue": "Business Intelligence",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 6,
+    "tagValue": "Cloud Development and Operations",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 7,
+    "tagValue": "Computer Programming",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 8,
+    "tagValue": "Computer Engineering Technology",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 9,
+    "tagValue": "Information Technology",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 10,
+    "tagValue": "Interactive Media Design",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 11,
+    "tagValue": "Mobile Application Design and Development",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 12,
+    "tagValue": "Web Development and Internet Applications",
+    "tagType": "Required Program"
+  },
+  {
+    "id": 1,
+    "tagValue": "1 Semester",
+    "tagType": "Required Semesters"
+  },
+  {
+    "id": 2,
+    "tagValue": "2 Semesters",
+    "tagType": "Required Semesters"
+  },
+  {
+    "id": 3,
+    "tagValue": "3 Semesters",
+    "tagType": "Required Semesters"
+  },
+  {
+    "id": 4,
+    "tagValue": "4 Semesters",
+    "tagType": "Required Semesters"
+  }
+]
+```
+
+---
